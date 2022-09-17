@@ -18,3 +18,6 @@ This framework standardize CRUD's operations into ViewModel's file, and endpoint
 Clone this repository and check app's example. 
 
 It use the follow endpoint https://jsonplaceholder.typicode.com/
+
+**WANTED**
+This is at the moment an experiment.

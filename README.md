@@ -6,7 +6,7 @@ NuGet Soon...
 
 ## How it works
 
-This framework standardize CRUD's operations into ViewModel's file, and endpoint's requests.
+This framework standardize CRUD's operations into ViewModel's file using generic T type, and endpoint's requests.
 
 *The target is WRITE LESS CODE, STANDARDIZING THE MOST USED UI CRUD OPERATIONS, IMPROVE PRODUCTIVITY SPEED.*
 

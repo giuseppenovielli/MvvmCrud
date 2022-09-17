@@ -8,7 +8,7 @@ NuGet Soon...
 
 This framework standardize CRUD's operations into ViewModel's file, and endpoint's requests.
 
-*The target is WRITE LESS CODE, STANDARDIZING THE MOST USED UI CRUD OPERATIONS, IMPROVE PRODUCTIVITY SPEED *
+*The target is WRITE LESS CODE, STANDARDIZING THE MOST USED UI CRUD OPERATIONS, IMPROVE PRODUCTIVITY SPEED*
 
 
 

@@ -1,0 +1,69 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Xamarin.Forms" />
+    <None Remove="ViewModel\" />
+    <None Remove="Prism.DryIoc.Forms" />
+    <None Remove="Services\" />
+    <None Remove="Newtonsoft.Json" />
+    <None Remove="Models\" />
+    <None Remove="Xamarin.Essentials" />
+    <None Remove="Views\" />
+    <None Remove="Utils\" />
+    <None Remove="Utils\Request\" />
+    <None Remove="Models\Request\" />
+    <None Remove="Services\Request\" />
+    <None Remove="Controls\" />
+    <None Remove="PropertyChanged.Fody" />
+    <None Remove="Views\Base\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
+    <PackageReference Include="Prism.DryIoc.Forms" Version="8.1.97" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.5.0" />
+    <PackageReference Include="PropertyChanged.Fody" Version="3.4.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
+    <Folder Include="Services\" />
+    <Folder Include="Models\" />
+    <Folder Include="Views\" />
+    <Folder Include="Utils\" />
+    <Folder Include="Utils\Request\" />
+    <Folder Include="Models\Request\" />
+    <Folder Include="Services\Request\" />
+    <Folder Include="Controls\" />
+    <Folder Include="Views\Base\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="AppResources.it.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppResources.it.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="AppResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Utils\Request\BaseRequest.cs" />
+    <Compile Remove="Utils\Request\RequestGetItems.cs" />
+    <Compile Remove="Utils\Request\RequestUploadItem.cs" />
+    <Compile Remove="Utils\Request\RequestSetup.cs" />
+    <Compile Remove="Utils\Request\RequestItem.cs" />
+    <Compile Remove="Utils\Request\RequestItems.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="AppResources.it.Designer.cs">
+      <DependentUpon>AppResources.it.resx</DependentUpon>
+    </Compile>
+    <Compile Update="AppResources.Designer.cs">
+      <DependentUpon>AppResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

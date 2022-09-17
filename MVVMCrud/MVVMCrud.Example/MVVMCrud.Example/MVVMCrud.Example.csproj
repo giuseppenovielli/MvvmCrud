@@ -1,0 +1,80 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2515" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.3" />
+    <PackageReference Include="PropertyChanged.Fody" Version="4.0.2" />
+    <PackageReference Include="Prism.Forms" Version="8.1.97" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Prism.DryIoc.Forms" />
+    <None Remove="Views\" />
+    <None Remove="ViewModels\" />
+    <None Remove="Models\" />
+    <None Remove="Utils\" />
+    <None Remove="Utils\MVVMCrud\" />
+    <None Remove="Views\Main\" />
+    <None Remove="ViewModels\Main\" />
+    <None Remove="PropertyChanged.Fody" />
+    <None Remove="Models\Post\" />
+    <None Remove="ViewModels\Post\" />
+    <None Remove="ViewModels\PostNewEdit\" />
+    <None Remove="Constants\" />
+    <None Remove="Views\Post\" />
+    <None Remove="Views\PostListView\" />
+    <None Remove="Views\PostNewEdit\" />
+    <None Remove="Prism.Forms" />
+    <None Remove="ViewModels\Comment\" />
+    <None Remove="Models\Comment\" />
+    <None Remove="Views\Comment\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="Models\" />
+    <Folder Include="Utils\" />
+    <Folder Include="Utils\MVVMCrud\" />
+    <Folder Include="Views\Main\" />
+    <Folder Include="ViewModels\Main\" />
+    <Folder Include="Models\Post\" />
+    <Folder Include="ViewModels\Post\" />
+    <Folder Include="ViewModels\PostNewEdit\" />
+    <Folder Include="Constants\" />
+    <Folder Include="Views\Post\" />
+    <Folder Include="Views\PostListView\" />
+    <Folder Include="Views\PostNewEdit\" />
+    <Folder Include="ViewModels\Comment\" />
+    <Folder Include="Models\Comment\" />
+    <Folder Include="Views\Comment\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MVVMCrud\MVVMCrud.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Controls\MVVMCrudSearchBar.cs" />
+    <Compile Remove="Controls\MVVMCrudCollectionView.cs" />
+    <Compile Remove="Controls\MVVMCrudListView.cs" />
+    <Compile Remove="Controls\MVVMCrudRefreshView.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="AppResources.Designer.cs">
+      <DependentUpon>AppResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="AppResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

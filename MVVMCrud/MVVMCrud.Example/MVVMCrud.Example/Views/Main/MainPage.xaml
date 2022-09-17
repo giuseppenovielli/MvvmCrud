@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    ios:Page.UseSafeArea="true"
+    x:Class="MVVMCrud.Example.Views.Main.MainPage"
+    xmlns:viewmodelsMain="clr-namespace:MVVMCrud.Example.ViewModels.Main"
+    x:DataType="viewmodelsMain:MainPageViewModel">
+
+    <StackLayout
+        HorizontalOptions="Center"
+        Margin="10,20,0,10">
+
+        <Button
+            Text="Post Page CollectionView"
+            Command="{Binding PostPageCommand}"/>
+
+
+        <Button
+            Text="Post Page ListView"
+            Command="{Binding PostPageListViewCommand}"/>
+
+
+    </StackLayout>
+    
+
+</ContentPage>

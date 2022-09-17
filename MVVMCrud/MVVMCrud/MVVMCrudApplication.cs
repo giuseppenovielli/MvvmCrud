@@ -7,8 +7,10 @@ using MVVMCrud.CustomView;
 using MVVMCrud.Models.ItemRoot;
 using MVVMCrud.Services.Request;
 using MVVMCrud.Services.RequestProvider;
+using MVVMCrud.Utils;
 using MVVMCrud.Utils.Request;
 using MVVMCrud.Views;
+using Newtonsoft.Json;
 using Prism.Ioc;
 using Xamarin.Forms;
 
@@ -100,6 +102,25 @@ namespace MVVMCrud
         public virtual void SetupPaginationRequest(List<KeyValuePair<string, string>> dataGet,
                                                     bool pagination,
                                                     int paginationSize){}
+
+        public virtual JsonSerializerSettings SetupJsonSettingsSerialize()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+            };
+            return settings;
+        }
+
+        public virtual JsonSerializerSettings SetupJsonSettingsDeserialize()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new IgnoreJsonPropertyContractResolver()
+            };
+            return settings;
+        }
 
         public virtual HttpClient SetupHttpClient() => HttpClient = new HttpClient();
 

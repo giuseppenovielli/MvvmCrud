@@ -5,9 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using MVVMCrud.Models.Base;
 using MVVMCrud.Services.Request;
-using MVVMCrud.Utils;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Prism.Navigation;
 using Xamarin.Forms;
 
@@ -23,16 +21,12 @@ namespace MVVMCrud.ViewModels.Base
         public int Position { get; set; }
         public int Section { get; set; }
 
-        private readonly JsonSerializerSettings _jsonSerializeSettings;
-
         public BaseItemEditAdvancedViewModel(
             INavigationService navigationService,
             IRequestService requestService) : base(navigationService, requestService)
         { 
             Position = -1;
             Section = -1;
-
-            _jsonSerializeSettings = SetupJsonSerializerSettings();
 
         }
 
@@ -85,33 +79,31 @@ namespace MVVMCrud.ViewModels.Base
             SetupInterface();
         }
 
-        public virtual JsonSerializerSettings SetupJsonSerializerSettings()
-        {
-            var settings = new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new IgnoreJsonPropertyContractResolver()
-            };
-            //settings.Converters.Add(new IsoDateTimeConverter { DateTimeFormat = DataService.DATE_TIME_FORMAT() });
-            //settings.Converters.Add(new IsoDateTimeConverter { DateTimeFormat = DataService.TIME_FORMAT() });
-
-            return settings;
-        }
 
         public virtual bool SetupIsDeserializeItem()
         {
             return false;
         }
 
+        public virtual JsonSerializerSettings SetupJsonDeserializerSettings()
+        {
+            return MVVMCrudApplication.Instance.SetupJsonSettingsDeserialize();
+        }
+
+        public virtual JsonSerializerSettings SetupJsonSerializerSettings()
+        {
+            return MVVMCrudApplication.Instance.SetupJsonSettingsSerialize();
+        }
+
         public virtual TItem SetupDeserializeItem(string itemSerialized)
         {
-            return JsonConvert.DeserializeObject<TItem>(itemSerialized, _jsonSerializeSettings);
+            return JsonConvert.DeserializeObject<TItem>(itemSerialized, SetupJsonDeserializerSettings());
         }
 
 
         public virtual TItemInput SetupDeserializeItemInput(string itemSerialized)
         {
-            return JsonConvert.DeserializeObject<TItemInput>(itemSerialized, _jsonSerializeSettings);
+            return JsonConvert.DeserializeObject<TItemInput>(itemSerialized, SetupJsonDeserializerSettings());
         }
 
         public virtual void SetupManageItemInput(TItemInput itemInput, TItem item)
@@ -268,16 +260,8 @@ namespace MVVMCrud.ViewModels.Base
         {
             if (!string.IsNullOrWhiteSpace(Endpoint))
             {
-
-                var settings = new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore,
-                };
-                //settings.Converters.Add(new IsoDateTimeConverter { DateTimeFormat = DataService.DATE_TIME_MY_SQL_FORMAT() });
-                //settings.Converters.Add(new IsoDateTimeConverter { DateTimeFormat = DataService.DATE_MY_SQL_FORMAT() });
-
-
-                var content = JsonConvert.SerializeObject(item, settings);
+                var jsonSettings = SetupJsonSerializerSettings();
+                var content = JsonConvert.SerializeObject(item, jsonSettings);
 
                 var values = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
 

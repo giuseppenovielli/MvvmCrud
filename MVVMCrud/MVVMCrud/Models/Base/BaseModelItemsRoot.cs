@@ -35,7 +35,8 @@ namespace MVVMCrud.Models.Base
                 }
                 else
                 {
-                    var jsonNew = JsonConvert.DeserializeObject<M>(itemJObject.ToString());
+                    var jsonSettings = MVVMCrudApplication.Instance.SetupJsonSettingsDeserialize();
+                    var jsonNew = JsonConvert.DeserializeObject<M>(itemJObject.ToString(), jsonSettings);
                     jsonNew.InitializeIDLong();
                     Items.Add(jsonNew);
                 }

@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using MVVMCrud.Models.ItemRoot;
 using MVVMCrud.Utils;
 using MVVMCrud.Utils.Request;
+using Newtonsoft.Json;
 
 namespace MVVMCrud.Example.Utils.MVVMCrud
 {
@@ -72,7 +73,7 @@ namespace MVVMCrud.Example.Utils.MVVMCrud
                 paginationItem.NextUrl = nextLink.Replace("http://", "https://");
 
             }
-            
         }
+
     }
 }

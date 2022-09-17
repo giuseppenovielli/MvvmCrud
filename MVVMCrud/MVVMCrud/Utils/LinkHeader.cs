@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace MVVMCrud.Utils
 {
+    //https://gist.github.com/pimbrouwers/8f78e318ccfefff18f518a483997be29
     public class LinkHeader
     {
         public string FirstLink { get; set; }

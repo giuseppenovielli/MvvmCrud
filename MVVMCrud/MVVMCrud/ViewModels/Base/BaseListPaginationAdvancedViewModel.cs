@@ -145,13 +145,13 @@ namespace MVVMCrud.ViewModels.Base
             _ = GetItems(PaginationItem.NextUrl);
         }
 
-        public bool SearchBarFocused(bool isFocused)
+        public virtual async Task<bool> SearchBarFocused(bool isFocused)
         {
             if (isFocused)
             {
-                if (PaginationItem != null && ItemsList.Count < PaginationItem.Count)
+                if (!string.IsNullOrWhiteSpace(PaginationItem?.NextUrl))
                 {
-                    _ = GetItems(pagination: false);
+                    await GetItems(pagination: false);
                     return true;
                 }
             }
@@ -277,15 +277,17 @@ namespace MVVMCrud.ViewModels.Base
             }
         }
 
+        public virtual JsonSerializerSettings SetupJsonSerializerSettings()
+        {
+            return MVVMCrudApplication.Instance.SetupJsonSettingsSerialize();
+        }
+
         public virtual string SetupCreateUpdatePageItemSerialized(TCellVM cellVM)
         {
             var item = cellVM.Item;
             if (item != null)
             {
-                var settings = new JsonSerializerSettings
-                {
-                    ContractResolver = new IgnoreJsonPropertyContractResolver()
-                };
+                var settings = SetupJsonSerializerSettings();
                 return JsonConvert.SerializeObject(item, settings);
             }
             return null;
@@ -426,21 +428,20 @@ namespace MVVMCrud.ViewModels.Base
                         ItemsListSearch = new ObservableCollection<TCellVM>(itemsResult);
                         ItemsSource = ItemsListSearch;
                         HideMessage();
-
                     }
                     else
                     {
                         ShowMessage(SearchBarMessageNotFound);
                         ItemsSource = new ObservableCollection<TCellVM>();
                     }
-
-
+                    LoadingMoreVM.HideLoadingMore();
                 }
                 else
                 {
                     ItemsSource = ItemsList;
-                    HideMessage();
 
+                    EndLoadingMore();
+                    HideMessage();
                 }
             }
             else

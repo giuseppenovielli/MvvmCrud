@@ -25,7 +25,9 @@ namespace MVVMCrud.Example.ViewModels.Post
 
         public override List<PostCellViewModel> PerformSearchSetup(string newText)
         {
-            return ItemsList.Where(o => o.Item.Title.StartsWith(newText, System.StringComparison.InvariantCultureIgnoreCase)).ToList();
+            var newTextLower = newText.ToLower();
+            var l =  ItemsList.Where(o => o.Item.Title.ToLower().Contains(newTextLower)).ToList();
+            return l;
         }
 
         public override string SetupDetailPageName()

@@ -40,6 +40,8 @@ namespace MVVMCrud.ViewModels.Base
         public THeaderCellVM HeaderVM { get; set; }
         public BaseContentView HeaderView { get; set; }
 
+        public NewEditItem<THeaderItem> HeaderEdited { get; private set; }
+
         public BaseListPaginationAdvancedHeaderViewModel(
             INavigationService navigationService,
             IRequestService requestService) : base(navigationService, requestService)
@@ -295,6 +297,7 @@ namespace MVVMCrud.ViewModels.Base
                     if (pos > -1)
                     {
                         //Edit
+                        HeaderEdited = editHeaderItem;
                         UpdateEditHeaderItem(editHeaderItem);
                     }
                 }
@@ -312,12 +315,8 @@ namespace MVVMCrud.ViewModels.Base
                 if (HeaderVM != null)
                 {
                     SetupEditItemMessage();
+                    HeaderView.BindingContext = HeaderVM;
 
-                    HeaderView = new BaseContentView
-                    {
-                        BindingContext = HeaderVM
-                    };
-                    
                 }
             }
         }
@@ -326,6 +325,14 @@ namespace MVVMCrud.ViewModels.Base
         {
             base.OnNavigatedFrom(parameters);
 
+            if (parameters.GetNavigationMode() == NavigationMode.Back)
+            {
+                if (HeaderEdited != null)
+                {
+                    parameters.Add("newEditItem", HeaderEdited);
+                }
+                
+            }
 
         }
     }

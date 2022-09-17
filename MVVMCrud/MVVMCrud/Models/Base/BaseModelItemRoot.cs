@@ -29,7 +29,8 @@ namespace MVVMCrud.Models.Base
             }
             else
             {
-                Item = JsonConvert.DeserializeObject<M>(jObject.ToString());
+                var jsonSettings = MVVMCrudApplication.Instance.SetupJsonSettingsDeserialize();
+                Item = JsonConvert.DeserializeObject<M>(jObject.ToString(), jsonSettings);
                 Item.InitializeIDLong();
             }
         }

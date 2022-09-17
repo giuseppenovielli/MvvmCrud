@@ -62,7 +62,9 @@ namespace MVVMCrud.Example.ViewModels.Comment
 
         public override List<BaseCellViewModel<CommentItem>> PerformSearchSetup(string newText)
         {
-            return ItemsList.Where(o => o.Item.Name.StartsWith(newText, System.StringComparison.InvariantCultureIgnoreCase)).ToList();
+            var newTextLower = newText.ToLower();
+            var l = ItemsList.Where(o => o.Item.Name.ToLower().Contains(newTextLower)).ToList();
+            return l;
         }
 
         public override bool SetupIsPaginationEnable()

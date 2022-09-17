@@ -6,11 +6,15 @@ NuGet Soon...
 
 **How it works**
 
-This framework standardize operations such as the CRUD into ViewModel's file, and endpoint's requests.
+This framework standardize CRUD's operations into ViewModel's file, and endpoint's requests.
 
-**The target is WRITE LESS CODE, STANDARDIZING THE MOST USED UI CRUD OPERATIONS.**
+*The target is WRITE LESS CODE, STANDARDIZING THE MOST USED UI CRUD OPERATIONS.*
+
+
+
 
 **Docs**
+
 Clone this repository and check app's example. 
 
 It use the follow endpoint https://jsonplaceholder.typicode.com/

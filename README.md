@@ -17,7 +17,7 @@ This framework standardize CRUD's operations into ViewModel's file using generic
 
 Clone this repository and check app's example. 
 
-It use the follow endpoint https://jsonplaceholder.typicode.com/ to test functionality.
+App's example use the follow endpoint https://jsonplaceholder.typicode.com/ to test functionality.
 
 ## WANTED
 

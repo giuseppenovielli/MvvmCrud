@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using MVVMCrud.Models.ItemRoot;
 using MVVMCrud.Utils;
 using MVVMCrud.Utils.Request;
@@ -20,15 +22,24 @@ namespace MVVMCrud.Example.Utils.MVVMCrud
 
         public override HttpClient SetupHttpClient()
         {
-            var client = base.SetupHttpClient();
+            HttpClientHandler handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = CheckSSLConnection
+            };
+
+            var client = new HttpClient(handler);
 
             var authHeader = client.DefaultRequestHeaders;
             authHeader.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
             return client;
         }
 
-        public override void SetupRootItemBase(RootItemBase rootItemBase)
+    private bool CheckSSLConnection(HttpRequestMessage arg1, X509Certificate2 arg2, X509Chain arg3, SslPolicyErrors arg4)
+    {
+        return true;
+    }
+
+    public override void SetupRootItemBase(RootItemBase rootItemBase)
         {
             var httpCode = rootItemBase.HttpResponseCode;
 

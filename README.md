@@ -11,7 +11,8 @@ This framework standardize CRUD's operations into ViewModel's file using generic
 *The target is WRITE LESS CODE, STANDARDIZING THE MOST USED UI CRUD OPERATIONS, IMPROVE PRODUCTIVITY SPEED.*
 
 Only with these following lines of code your page can:
-- Display posts's data 
+- Display list of data
+- Embedded custom message, if endpoint fails
 - Embedded pagination's manager
 - Embedded Perform searchs
 - Embedded deletion cell's content, with automatic detect endpoint and confirm message

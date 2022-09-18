@@ -31,3 +31,7 @@ This is at the moment an experiment. Use at your own risk.
 
 ## Copyright and license
 Code released under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Did you like ?
+Buy Me A Coffee
+

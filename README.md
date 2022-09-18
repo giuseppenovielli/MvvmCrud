@@ -1,8 +1,8 @@
 # MvvmCrud
 MvvmCrud helps your Xamarin.Forms app with Prism Library to standardize operations of creating, updating, deletion and display data, from REST API.
 
-NuGet Soon...
 
+![image info](https://img.shields.io/nuget/v/MvvmCrud.Forms.Prism)
 
 ## How it works
 

@@ -18,6 +18,8 @@ Only with these following lines of code your page can:
 - Embedded deletion cell's content, with automatic detect endpoint and confirm message
 - Embedded update cell's content, with automatic: detect endpoint, open page, save, upload and update list's cell
 - Embedded open detail's page
+- Embedded empty view UI
+- Embedded loadig more view UI
 
 All fully customizable!
 

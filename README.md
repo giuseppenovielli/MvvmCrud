@@ -10,7 +10,45 @@ This framework standardize CRUD's operations into ViewModel's file using generic
 
 *The target is WRITE LESS CODE, STANDARDIZING THE MOST USED UI CRUD OPERATIONS, IMPROVE PRODUCTIVITY SPEED.*
 
+Only with these following lines of code your page can:
+- Display posts's data 
+- Embedded pagination's manager
+- Embedded Perform searchs
+- Embedded deletion cell's content, with automatic detect endpoint and confirm message
+- Embedded update cell's content, with automatic: detect endpoint, open page, save, upload and update list's cell
+- Embedded open detail's page
 
+All fully customizable!
+
+```
+public class PostPageViewModel : BaseListPaginationAdvancedViewModel
+        <PostCellViewModel, BaseModelItemsRoot<PostItem>, PostItem>
+    {
+        public PostPageViewModel(
+            INavigationService navigationService,
+            IRequestService requestService) : base(navigationService, requestService)
+        {
+        }
+
+        public override string SetupEndpoint()
+        {
+            return Constants.Constants.METHOD_POST;
+        }
+
+        public override List<PostCellViewModel> PerformSearchSetup(string newText)
+        {
+            var newTextLower = newText.ToLower();
+            var l =  ItemsList.Where(o => o.Item.Title.ToLower().Contains(newTextLower)).ToList();
+            return l;
+        }
+
+        public override string SetupDetailPageName()
+        {
+            return nameof(CommentPage);
+        }
+
+    }
+```
 
 
 ## Docs

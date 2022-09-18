@@ -1,8 +1,16 @@
 # MvvmCrud
 MvvmCrud helps your Xamarin.Forms app with Prism Library to standardize operations of creating, updating, deletion and display data, from REST API.
 
-NuGet Soon...
+![image info](https://img.shields.io/nuget/v/MvvmCrud.Forms.Prism)
 
+## Installation
+
+Add nuget package only .net standard project, it doesn't have platform specific references.
+https://www.nuget.org/packages/MvvmCrud.Forms.Prism
+```
+Install-Package MvvmCrud.Forms.Prism -Version 0.0.1
+```
+Done!
 
 ## How it works
 
@@ -68,9 +76,8 @@ public class PostPageViewModel : BaseListPaginationAdvancedViewModel
 
 ## Docs
 
-Clone this repository and check app's example. 
-
-App's example use the follow endpoint https://jsonplaceholder.typicode.com/ to test functionality.
+- Clone this repository and check app's example. App's example use the follow endpoint https://jsonplaceholder.typicode.com/ to test functionality.
+- Go to [Wiki](https://github.com/giuseppenovielli/MvvmCrud/wiki) page.
 
 ## Feedback or Requests
 Use GitHub [Issues](https://github.com/giuseppenovielli/MvvmCrud/issues) for bug reports and feature requests.

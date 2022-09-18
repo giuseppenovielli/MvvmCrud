@@ -26,8 +26,20 @@ namespace MVVMCrud.Example.ViewModels.Post
         public override List<PostCellViewModel> PerformSearchSetup(string newText)
         {
             var newTextLower = newText.ToLower();
-            var l =  ItemsList.Where(o => o.Item.Title.ToLower().Contains(newTextLower)).ToList();
-            return l;
+            return ItemsList.Where((PostCellViewModel arg1, int arg2) =>
+            {
+                var item = arg1.Item;
+                if (
+                        !string.IsNullOrWhiteSpace(item.Title)
+                        &&
+                        item.Title.ToLower().Contains(newTextLower)
+                    )
+                {
+                    return true;
+                }
+                return false;
+
+            }).ToList();
         }
 
         public override string SetupDetailPageName()

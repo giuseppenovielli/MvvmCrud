@@ -96,6 +96,20 @@ namespace MVVMCrud.ViewModels.Base
 
         }
 
+        public override void ShowMessage(string message, bool showRefresh = false, bool removeSeachBar = false)
+        {
+            base.ShowMessage(message, showRefresh, removeSeachBar);
+
+            LoadingMoreVM.HideLoadingMore();
+        }
+
+        public override void HideMessage(bool addSearchBar = true)
+        {
+            base.HideMessage(addSearchBar);
+
+            EndLoadingMore();
+        }
+
         public override async void EndLoadingMore()
         {
             base.EndLoadingMore();

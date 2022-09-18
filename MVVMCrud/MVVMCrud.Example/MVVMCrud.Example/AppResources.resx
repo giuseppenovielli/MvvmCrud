@@ -17,13 +17,13 @@
         <value>Posts</value>
     </data>
 	<data name="title_page_post_new" xml:space="preserve">
-        <value>Nuovo Post</value>
+        <value>New Post</value>
     </data>
 	<data name="title_page_post_edit" xml:space="preserve">
-        <value>Modifica Post</value>
+        <value>Edit Post</value>
     </data>
 
 	<data name="title_page_post_comments" xml:space="preserve">
-        <value>Commenti</value>
+        <value>Comments</value>
     </data>
 </root>

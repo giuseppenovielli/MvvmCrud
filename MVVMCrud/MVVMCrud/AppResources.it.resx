@@ -34,7 +34,7 @@
         <value>Attendi...</value>
     </data>
     <data name="error_data_loading" xml:space="preserve">
-        <value>Errore Interno!</value>
+        <value>Errore Interno</value>
     </data>
 	<data name="ok" xml:space="preserve">
         <value>OK</value>
@@ -49,10 +49,10 @@
         <value>Cerca</value>
     </data>
     <data name="msg_search_not_result_found" xml:space="preserve">
-        <value>Nessun Risultato!</value>
+        <value>Nessun Risultato</value>
     </data>
     <data name="error_internet_connection" xml:space="preserve">
-        <value>Nessuna connessione!</value>
+        <value>Nessuna connessione</value>
     </data>
     <data name="error_generic" xml:space="preserve">
         <value>Mi dispiace, si è verificato un problema! Controlla la presenza di connessione e riprova in seguito!</value>
@@ -73,5 +73,15 @@
     </data>
     <data name="item_deleted_successfully" xml:space="preserve">
         <value>Cancellato.</value>
+    </data>
+
+    <data name="action_add" xml:space="preserve">
+        <value>Aggiungi</value>
+    </data>
+    <data name="action_options" xml:space="preserve">
+        <value>Modifica</value>
+    </data>
+    <data name="action_send" xml:space="preserve">
+        <value>Invia</value>
     </data>
 </root>

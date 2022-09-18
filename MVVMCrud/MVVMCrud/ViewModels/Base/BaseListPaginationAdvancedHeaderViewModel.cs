@@ -333,7 +333,6 @@ namespace MVVMCrud.ViewModels.Base
                 }
                 
             }
-
         }
     }
 }

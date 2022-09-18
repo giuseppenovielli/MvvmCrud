@@ -11,10 +11,7 @@
     x:DataType="viewmodelsPost:PostPageViewModel">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add"
-                     Command="{Binding TlbAddCommandClick}"
-                     Order="Primary"
-                     Priority="0" />
+       <controls:MVVMCrudAddToolbarItem/>
     </ContentPage.ToolbarItems>
 
     <Grid

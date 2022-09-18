@@ -434,13 +434,10 @@ namespace MVVMCrud.ViewModels.Base
                         ShowMessage(SearchBarMessageNotFound);
                         ItemsSource = new ObservableCollection<TCellVM>();
                     }
-                    LoadingMoreVM.HideLoadingMore();
                 }
                 else
                 {
                     ItemsSource = ItemsList;
-
-                    EndLoadingMore();
                     HideMessage();
                 }
             }
@@ -471,9 +468,9 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual void SubscribeSearchBarFocused()
         {
-            MessagingCenter.Subscribe<object, bool>(this, "SearchBar_Focused", (sender, isFocused) =>
+            MessagingCenter.Subscribe<object, bool>(this, "SearchBar_Focused", async (sender, isFocused) =>
             {
-                SearchBarFocused(isFocused);
+                await SearchBarFocused(isFocused);
             });
         }
 

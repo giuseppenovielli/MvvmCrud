@@ -13,8 +13,8 @@
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2515" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.3" />
-    <PackageReference Include="PropertyChanged.Fody" Version="4.0.2" />
-    <PackageReference Include="Prism.Forms" Version="8.1.97" />
+    <PackageReference Include="PropertyChanged.Fody" Version="4.0.3" />
+    <PackageReference Include="Prism.DryIoc.Forms" Version="8.1.97" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Prism.DryIoc.Forms" />
@@ -37,6 +37,7 @@
     <None Remove="ViewModels\Comment\" />
     <None Remove="Models\Comment\" />
     <None Remove="Views\Comment\" />
+    <None Remove="MvvmCrud.Forms.Prism" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
@@ -58,9 +59,6 @@
     <Folder Include="Views\Comment\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MVVMCrud\MVVMCrud.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Remove="Controls\MVVMCrudSearchBar.cs" />
     <Compile Remove="Controls\MVVMCrudCollectionView.cs" />
     <Compile Remove="Controls\MVVMCrudListView.cs" />
@@ -76,5 +74,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MVVMCrud\MVVMCrud.csproj" />
   </ItemGroup>
 </Project>

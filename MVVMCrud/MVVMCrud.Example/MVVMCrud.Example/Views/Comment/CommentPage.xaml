@@ -16,28 +16,22 @@
         <controls:MVVMCrudSearchBar
             Grid.Row="0"/>
 
-        <controls:MVVMCrudListView
-            Grid.Row="1"
-            Header="{Binding HeaderView}"
-            IsPullToRefreshEnabled="True"
-            ItemsSource="{Binding ItemsSource}">
-            <x:Arguments>
-                <ListViewCachingStrategy>RecycleElement</ListViewCachingStrategy>
-            </x:Arguments>
+        <controls:MVVMCrudRefreshView
+            Grid.Row="1">
 
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
+            <controls:MVVMCrudCollectionView
+                Header="{Binding HeaderView}"
+                ItemsSource="{Binding ItemsSource}">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
                         <viewsComment:CommentCell/>
-                </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
 
-        </controls:MVVMCrudListView>
+            </controls:MVVMCrudCollectionView>
 
-        <views:EmptyView
-            Grid.Row="1"
-            BindingContext="{Binding EmptyVM}"/>
+        </controls:MVVMCrudRefreshView>
 
     </Grid>
 

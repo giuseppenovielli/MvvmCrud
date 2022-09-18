@@ -14,64 +14,71 @@
 	</resheader>
 
 	<data name="action_refresh" xml:space="preserve">
-        <value>Ricarica</value>
+        <value>Reload</value>
     </data>
 	<data name="list_loading_more" xml:space="preserve">
-        <value>Mostra Altro</value>
+        <value>Show More</value>
     </data>
 
 	<data name="msg_confirm_upload" xml:space="preserve">
-        <value>Confermi di voler caricare questi dati?</value>
+        <value>Do you confirm that you want to upload this data?</value>
     </data>
     <data name="msg_confirm_delete" xml:space="preserve">
-        <value>Confermi di voler cancellare?</value>
+        <value>Do you confirm that you want to cancel?</value>
     </data>
 
 	<data name="msg_empty_list" xml:space="preserve">
-        <value>Nessun dato</value>
+        <value>No data</value>
     </data>
 	<data name="msg_loading" xml:space="preserve">
-        <value>Attendi...</value>
+        <value>Wait...</value>
     </data>
     <data name="error_data_loading" xml:space="preserve">
-        <value>Errore Interno!</value>
+        <value>Internal Error!</value>
     </data>
 	<data name="ok" xml:space="preserve">
         <value>OK</value>
     </data>
 	<data name="cancel" xml:space="preserve">
-        <value>Annulla</value>
-    </data>
-	<data name="cancel" xml:space="preserve">
-        <value>Annulla</value>
+        <value>Cancel</value>
     </data>
 	<data name="placeholder_search" xml:space="preserve">
-        <value>Cerca</value>
+        <value>Search</value>
     </data>
     <data name="msg_search_not_result_found" xml:space="preserve">
-        <value>Nessun Risultato!</value>
+        <value>No result</value>
     </data>
     <data name="error_internet_connection" xml:space="preserve">
-        <value>Nessuna connessione!</value>
+        <value>No connection</value>
     </data>
     <data name="error_generic" xml:space="preserve">
-        <value>Mi dispiace, si è verificato un problema! Controlla la presenza di connessione e riprova in seguito!</value>
+        <value>Sorry, there was a problem! Check for a connection and try again later!</value>
     </data>
 
     <data name="action_yes" xml:space="preserve">
-        <value>Si</value>
+        <value>Yes</value>
     </data>
     <data name="action_no" xml:space="preserve">
         <value>No</value>
     </data>
 
     <data name="item_added_successfully" xml:space="preserve">
-        <value>Caricato.</value>
+        <value>Uploaded.</value>
     </data>
     <data name="item_update_successfully" xml:space="preserve">
-        <value>Modificato.</value>
+        <value>Edited.</value>
     </data>
     <data name="item_deleted_successfully" xml:space="preserve">
-        <value>Cancellato.</value>
+        <value>Deleted.</value>
+    </data>
+
+    <data name="action_add" xml:space="preserve">
+        <value>Add</value>
+    </data>
+    <data name="action_options" xml:space="preserve">
+        <value>Edit</value>
+    </data>
+    <data name="action_send" xml:space="preserve">
+        <value>Send</value>
     </data>
 </root>

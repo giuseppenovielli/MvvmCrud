@@ -154,5 +154,23 @@ namespace MVVMCrud {
                 return ResourceManager.GetString("item_deleted_successfully", resourceCulture);
             }
         }
+        
+        internal static string action_add {
+            get {
+                return ResourceManager.GetString("action_add", resourceCulture);
+            }
+        }
+        
+        internal static string action_options {
+            get {
+                return ResourceManager.GetString("action_options", resourceCulture);
+            }
+        }
+        
+        internal static string action_send {
+            get {
+                return ResourceManager.GetString("action_send", resourceCulture);
+            }
+        }
     }
 }

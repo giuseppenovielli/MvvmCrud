@@ -5,13 +5,11 @@
     x:Class="MVVMCrud.Example.Views.PostNewEdit.PostNewEditPage"
     xmlns:viewmodelsPostNewEdit="clr-namespace:MVVMCrud.Example.ViewModels.PostNewEdit"
     xmlns:mvvmcrudViews="clr-namespace:MVVMCrud.Views.Base;assembly=MVVMCrud"
+    xmlns:controls="clr-namespace:MVVMCrud.Controls;assembly=MVVMCrud"
     x:DataType="viewmodelsPostNewEdit:PostNewEditPageViewModel">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Send"
-                     Command="{Binding TlbSendCommandClick}"
-                     Order="Primary"
-                     Priority="0" />
+       <controls:MVVMCrudSendToolbarItem/>
     </ContentPage.ToolbarItems>
 
     <ScrollView>
@@ -22,7 +20,7 @@
 
             <Entry
                 Text="{Binding ItemInput.Title}"
-                Placeholder="Titolo"
+                Placeholder="Title"
                 />
 
             <Editor

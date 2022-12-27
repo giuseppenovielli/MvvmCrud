@@ -10,7 +10,7 @@ namespace MVVMCrud.ViewModels.Base
 {
     public class BaseListPaginationViewModel : BaseListViewModel
     {
-        public LoadingMoreViewModel LoadingMoreVM { get; set; }
+        public LoadingMoreViewModel LoadingMoreVM { get; }
         public LoadingMoreView LoadingMoreView { get; private set; }
 
         public DelegateCommand ItemsThresholdReachedCommand { get; private set; }
@@ -19,17 +19,10 @@ namespace MVVMCrud.ViewModels.Base
         public PaginationItem PaginationItem;
         public bool ViewMore;
 
-
         public BaseListPaginationViewModel(
             INavigationService navigationService,
             IRequestService requestService = null) : base(navigationService, requestService)
         {
-            ItemsThresholdReachedCommand = new DelegateCommand(ItemsThresholdReached, CanExecuteLoadingMore).ObservesProperty(() => ItemTreshold);
-        }
-
-        public override void Initialize(INavigationParameters parameters)
-        {
-            base.Initialize(parameters);
 
             LoadingMoreVM = new LoadingMoreViewModel(NavigationService)
             {
@@ -42,16 +35,9 @@ namespace MVVMCrud.ViewModels.Base
             {
                 BindingContext = LoadingMoreVM
             };
-        }
 
-        public virtual bool SetupIsPaginationEnable()
-        {
-            return true;
-        }
+            ItemsThresholdReachedCommand = new DelegateCommand(ItemsThresholdReached, CanExecuteLoadingMore).ObservesProperty(() => ItemTreshold);
 
-        public virtual ContentView GetLoadingMoreView()
-        {
-            return MVVMCrudApplication.GetLoadingMoreView();
         }
 
         bool CanExecuteLoadingMore()
@@ -96,20 +82,6 @@ namespace MVVMCrud.ViewModels.Base
 
         }
 
-        public override void ShowMessage(string message, bool showRefresh = false, bool removeSeachBar = false)
-        {
-            base.ShowMessage(message, showRefresh, removeSeachBar);
-
-            LoadingMoreVM.HideLoadingMore();
-        }
-
-        public override void HideMessage(bool addSearchBar = true)
-        {
-            base.HideMessage(addSearchBar);
-
-            EndLoadingMore();
-        }
-
         public override async void EndLoadingMore()
         {
             base.EndLoadingMore();
@@ -131,6 +103,18 @@ namespace MVVMCrud.ViewModels.Base
             base.ListViewRefresh();
 
             LoadingMoreVM.HideLoadingMore();
+        }
+
+        public virtual bool SetupIsPaginationEnable()
+        {
+            return true;
+        }
+
+        public override void ShowMessage(string message, bool showRefresh = false, bool removeSeachBar = false, bool listViewIsVisible = false)
+        {
+            base.ShowMessage(message, showRefresh, removeSeachBar, listViewIsVisible);
+
+            LoadingMoreVM.BtnLoadingMoreIsVisible = false;
         }
     }
 }

@@ -9,8 +9,10 @@ using MVVMCrud.Models.Base;
 using MVVMCrud.Models.ItemRoot;
 using MVVMCrud.Services.Request;
 using MVVMCrud.Utils;
+using MVVMCrud.Views.Base;
 using Newtonsoft.Json;
 using Prism.Navigation;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace MVVMCrud.ViewModels.Base
@@ -24,22 +26,49 @@ namespace MVVMCrud.ViewModels.Base
         public ObservableCollection<TCellVM> ItemsListSearch { get; set; }
         public ObservableCollection<TCellVM> ItemsSource { get; set; }
 
-        public event EventHandler<int> OnScroolToIndex;
+        readonly string _uuidMessagingCenter;
+
+        public string Id { get; private set; }
+        public bool ScrolledToId { get; set; }
+
+        bool _isLoadingData;
 
         public BaseListPaginationAdvancedViewModel(
             INavigationService navigationService,
             IRequestService requestService) : base(navigationService, requestService)
         {
+            _uuidMessagingCenter = MVVMCrudApplication.GetLastPageUUID();
         }
 
         public override void Initialize(INavigationParameters parameters)
         {
             base.Initialize(parameters);
 
+            if (parameters.ContainsKey("id")){ Id = parameters.GetValue<string>("id"); }
+
             TitlePage = SetupTitlePage();
             Endpoint = SetupEndpoint();
 
-            _ = SetupGet();
+            if (string.IsNullOrWhiteSpace(Id))
+            {
+                _ = SetupGet();
+            }
+            else
+            {
+                ShowMessage(MVVMCrudApplication.GetLoadingText());
+            }
+
+        }
+
+
+        public override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (!string.IsNullOrWhiteSpace(Id))
+            {
+                _ = SetupGet();
+            }
         }
 
         public override string SetupTitlePage()
@@ -65,14 +94,37 @@ namespace MVVMCrud.ViewModels.Base
 
         public async virtual Task SetupGet()
         {
-            await GetItems(pagination: SetupIsPaginationEnable());
+            await GetItems(pagination: ManageIsPagination());
+
         }
+
+        public virtual bool ManageIsPagination()
+        {
+            if (IsScroolToItemInput())
+            {
+                return true;
+            }
+            else
+            {
+                return SetupIsPaginationEnable();
+            }
+        }
+
+        public virtual bool IsScroolToItemInput()
+        {
+            return (
+                    !string.IsNullOrWhiteSpace(Id)
+                    &&
+                    !ScrolledToId
+                    );
+        }
+
 
         public virtual async Task<TItemsRoot> SetupGetItemsRequest(string urlPagination = null, bool pagination = true)
         {
             if (!string.IsNullOrWhiteSpace(Endpoint))
             {
-                return await RequestService.List<TItemsRoot, TItem>(Endpoint, SetupContentQuery(), urlPagination, pagination);
+                return await RequestService.List<TItemsRoot, TItem>(Endpoint, SetupContentQuery(), urlPagination, pagination, httpClient: GetHttpClient());
             }
 
             return await Task.FromResult<TItemsRoot>(null);
@@ -100,11 +152,18 @@ namespace MVVMCrud.ViewModels.Base
         {
             base.ListViewRefresh();
 
-            _ = SetupGet();
+            _ = SetupGetItems();
+        }
+
+        public virtual async Task SetupGetItems()
+        {
+            await GetItems(pagination: SetupIsPaginationEnable());
         }
 
         public async Task GetItems(string urlPagination = null, bool pagination = true)
         {
+            _isLoadingData = true;
+
             var rootItemBase = await RequestService.RequestItems<TItemsRoot, TItem>
                 (
                     async (string arg1, bool arg2) =>
@@ -116,7 +175,7 @@ namespace MVVMCrud.ViewModels.Base
                     {
                         SetupGetItemsPagination(urlPagination);
                     },
-                urlPagination, pagination);
+                urlPagination, pagination: pagination);
 
 
             if (rootItemBase != null)
@@ -136,6 +195,8 @@ namespace MVVMCrud.ViewModels.Base
             SetupLoadingCompleteItems();
 
             EndLoadingMore();
+
+            _isLoadingData = false;
         }
 
         public override void LoadingMore()
@@ -145,13 +206,15 @@ namespace MVVMCrud.ViewModels.Base
             _ = GetItems(PaginationItem.NextUrl);
         }
 
-        public virtual async Task<bool> SearchBarFocused(bool isFocused)
+        public bool SearchBarFocused(bool isFocused)
         {
             if (isFocused)
             {
-                if (!string.IsNullOrWhiteSpace(PaginationItem?.NextUrl))
+                if (PaginationItem != null
+                    &&
+                    !string.IsNullOrWhiteSpace(PaginationItem.NextUrl))
                 {
-                    await GetItems(pagination: false);
+                    _ = GetItems(pagination: false);
                     return true;
                 }
             }
@@ -181,19 +244,23 @@ namespace MVVMCrud.ViewModels.Base
             SetupGetItemsExtra(obj);
 
             var items = obj.Items;
-            ArrayLenght = items.Count;
-
-            if (ArrayLenght > 0)
+            if (items != null)
             {
-                foreach (var item in items)
+                ArrayLenght = items.Count;
+
+                if (ArrayLenght > 0)
                 {
-                    var cellVM = InstanceCellVM(item);
-                    if (cellVM != null)
+                    foreach (var item in items)
                     {
-                        ItemsList.Add(cellVM);
+                        var cellVM = InstanceCellVM(item);
+                        if (cellVM != null)
+                        {
+                            ItemsList.Add(cellVM);
+                        }
                     }
                 }
             }
+
         }
 
 
@@ -215,6 +282,11 @@ namespace MVVMCrud.ViewModels.Base
 
                     });
 
+			        cellVM.SelectClickCommand = new Command<TCellVM>((obj) =>
+                    {
+                        SetupSelectedItem(obj);
+                    });
+
                     cellVM.DetailPageClickCommand = new Command<TCellVM>((obj) =>
                     {
                         SetupDetailPage(obj);
@@ -228,21 +300,15 @@ namespace MVVMCrud.ViewModels.Base
             return null;
         }
 
-        public virtual string SetupDetailPageName()
+        public virtual async void SetupSelectedItem(TCellVM obj)
         {
-            return string.Empty;
-        }
-
-        public virtual async void SetupDetailPage(TCellVM obj)
-        {
-            var pageName = SetupDetailPageName();
-
             var navParams = new NavigationParameters
             {
-                { "id", obj.Item.Id },
-                { "position", ItemsSource.IndexOf(obj) }
+                { "selectedItem", obj?.Item}
             };
-            var navResult = await NavigationService.NavigateAsync(pageName, navParams);
+
+            var navResult = await NavigationService.GoBackAsync(navParams, useModalNavigation: true);
+
         }
 
         public virtual string GetConfirmDeleteText()
@@ -277,17 +343,15 @@ namespace MVVMCrud.ViewModels.Base
             }
         }
 
-        public virtual JsonSerializerSettings SetupJsonSerializerSettings()
-        {
-            return MVVMCrudApplication.Instance.SetupJsonSettingsSerialize();
-        }
-
         public virtual string SetupCreateUpdatePageItemSerialized(TCellVM cellVM)
         {
             var item = cellVM.Item;
             if (item != null)
             {
-                var settings = SetupJsonSerializerSettings();
+                var settings = new JsonSerializerSettings
+                {
+                    ContractResolver = new IgnoreJsonPropertyContractResolver()
+                };
                 return JsonConvert.SerializeObject(item, settings);
             }
             return null;
@@ -340,6 +404,10 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual bool SetupCreateUpdatePageIsModal()
         {
+            if (Device.RuntimePlatform == Device.iOS)
+            {
+                return true;
+            }
             return false;
         }
 
@@ -355,7 +423,7 @@ namespace MVVMCrud.ViewModels.Base
                 &&
                 await SetupDeleteMessageConfirm())
             {
-                return await RequestService.RequestDefaultDeleteItem(SetupDeleteEndpoint(), id, TitlePage);
+                return await RequestService.RequestDefaultDeleteItem(SetupDeleteEndpoint(), id, TitlePage, httpClient: GetHttpClient());
             }
 
             return null;
@@ -411,46 +479,100 @@ namespace MVVMCrud.ViewModels.Base
         public virtual void SetupLoadingCompleteItems()
         {
             PerformSearch(SearchText);
+            ScroolToItemInput();
         }
 
+        public virtual void ScroolToItemInput()
+        {
+            if (IsScroolToItemInput())
+            {
+                var item = ItemsSource.Where(x => x.Item.Id == Id).FirstOrDefault();
+                if (item != null)
+                {
+                    ScroolTo(item);
+                    ScrolledToId = true;
+                }
+            }
+        }
 
+        public virtual string SetupDetailPageName()
+        {
+            return string.Empty;
+        }
+
+        public virtual async void SetupDetailPage(TCellVM obj)
+        {
+            var pageName = SetupDetailPageName();
+
+            var navParams = new NavigationParameters
+            {
+                { "id", obj.Item.Id },
+                { "position", ItemsSource.IndexOf(obj) }
+            };
+            var navResult = await NavigationService.NavigateAsync(pageName, navParams);
+        }
 
         public override void PerformSearch(string newText)
         {
-            if (ItemsList != null && ItemsList.Count > 0)
+            if (
+                ItemsList != null
+                &&
+                ItemsList.Count > 0
+                )
             {
                 if (!string.IsNullOrWhiteSpace(newText))
                 {
-                    var itemsResult = PerformSearchSetup(newText);
+                    Task.Run(() =>
+                    {
+                        var itemsResult = PerformSearchSetup(newText);
 
-                    if (itemsResult != null && itemsResult.Count > 0)
-                    {
-                        ItemsListSearch = new ObservableCollection<TCellVM>(itemsResult);
-                        ItemsSource = ItemsListSearch;
-                        HideMessage();
-                    }
-                    else
-                    {
-                        ShowMessage(SearchBarMessageNotFound);
-                        ItemsSource = new ObservableCollection<TCellVM>();
-                    }
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            if (itemsResult != null && itemsResult.Count > 0)
+                            {
+                                ItemsListSearch = new ObservableCollection<TCellVM>(itemsResult);
+                                ItemsSource = ItemsListSearch;
+                                HideMessage();
+
+                            }
+                            else
+                            {
+                                ShowMessage(SearchBarMessageNotFound);
+                                ItemsSource = new ObservableCollection<TCellVM>();
+                            }
+
+                        });
+                        
+                    });
+
                 }
                 else
                 {
                     ItemsSource = ItemsList;
                     HideMessage();
+
                 }
             }
             else
-            {
-                ShowMessage(GetEmptyText(), true, true);
-                ItemsSource = ItemsList;
+            { 
+                
+                if (!_isLoadingData)
+                {
+                    ShowMessage(GetEmptyText(), true, true);
+                    ItemsSource = ItemsList;
+                }
+                else
+                {
+                    ShowMessage(GetLoadingText());
+                }
+
             }
         }
 
         public virtual void SubscribeListViewItemAppearing()
         {
-            MessagingCenter.Subscribe<object, object>(this, "ListView_ItemAppearing", (sender, args) =>
+            var message = string.Format("ListView_ItemAppearing {0}", _uuidMessagingCenter);
+            MessagingCenter.Subscribe<object, object>(this, message, (sender, args) =>
             {
                 if (
                     ItemsList != null
@@ -468,32 +590,66 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual void SubscribeSearchBarFocused()
         {
-            MessagingCenter.Subscribe<object, bool>(this, "SearchBar_Focused", async (sender, isFocused) =>
+            var message = string.Format("SearchBar_Focused {0}", _uuidMessagingCenter);
+
+            MessagingCenter.Subscribe<object, bool>(this, message, (sender, isFocused) =>
             {
-                await SearchBarFocused(isFocused);
+                SearchBarFocused(isFocused);
             });
+        }
+
+        public virtual void SubscribeScroolToAnimate()
+        {
+            var message = string.Format("ListView_ScroolToItem_Animate_To_ViewModel {0}", _uuidMessagingCenter);
+            MessagingCenter.Subscribe<ContentView>(this, message, (sender) =>
+            {
+                ScroolToAnimate(sender);
+            });
+
         }
 
         public virtual void UnsubscribeListViewItemAppearing()
         {
-            MessagingCenter.Unsubscribe<object, object>(this, "ListView_ItemAppearing");
+            var message = string.Format("ListView_ItemAppearing {0}", _uuidMessagingCenter);
+            MessagingCenter.Unsubscribe<object, object>(this, message);
         }
 
         public virtual void UnsubscribeSearchBarFocused()
         {
-            MessagingCenter.Unsubscribe<object, bool>(this, "SearchBar_Focused");
+            var message = string.Format("SearchBar_Focused {0}", _uuidMessagingCenter);
+            MessagingCenter.Unsubscribe<object, bool>(this, message);
+        }
+
+        public virtual void UnsubscribeScroolToAnimate()
+        {
+            var message = string.Format("ListView_ScroolToItem_Animate_To_ViewModel {0}", _uuidMessagingCenter);
+            MessagingCenter.Unsubscribe<ContentView, object>(this, message);
         }
 
         public virtual void SubscribeMessagingCenter()
         {
             SubscribeListViewItemAppearing();
             SubscribeSearchBarFocused();
+            SubscribeScroolToAnimate();
         }
 
         public virtual void UnsubscribeMessagingCenter()
         {
             UnsubscribeListViewItemAppearing();
             UnsubscribeSearchBarFocused();
+            UnsubscribeScroolToAnimate();
+        }
+
+        public virtual void SetupDeleteItem(int pos)
+        {
+            //Delete Item
+            if (pos < ItemsList.Count)
+            {
+                ItemsList.RemoveAt(pos);
+                PerformSearch(SearchText);
+            }
+
+            SetupDeleteItemMessage();
         }
 
         public override void OnNavigatedTo(INavigationParameters parameters)
@@ -540,20 +696,9 @@ namespace MVVMCrud.ViewModels.Base
         public virtual int AddNewItemPosition() => 0;
         public virtual bool AddNewItemIsScroolEnabled() => true;
 
-        public virtual void SetupDeleteItem(int pos)
-        {
-            //Delete Item
-            if (pos < ItemsList.Count)
-            {
-                ItemsList.RemoveAt(pos);
-                PerformSearch(SearchText);
-            }
-
-            SetupDeleteItemMessage();
-        }
-
         public virtual void AddNewItem(TItem item)
         {
+
             if (item != null)
             {
                 var cellVM = SetupInstanceCell(item);
@@ -583,11 +728,39 @@ namespace MVVMCrud.ViewModels.Base
             var cellVM = ItemsList?.ElementAtOrDefault(newItemPos);
             if (cellVM != null)
             {
-                OnScroolToIndex?.Invoke(this, newItemPos);
-
-                var cellVMObj = cellVM as object;
-                MessagingCenter.Send(this as object, "ListView_OnScrool", cellVMObj);
+                ScroolTo(cellVM);
             }
+
+        }
+
+        public virtual void ScroolTo(object listObj)
+        {
+            var scroolToItem = new ScroolToItem()
+            {
+                IsAnimate = ScroolToAnimateIsEnable(),
+                Item = listObj
+            };
+
+            var message = string.Format("ListView_OnScrool {0}", _uuidMessagingCenter);
+            MessagingCenter.Send(this as object, message, scroolToItem);
+        }
+
+        public virtual bool ScroolToAnimateIsEnable()
+        {
+            return true;
+        }
+
+        public virtual void ScroolToAnimate(ContentView contentView)
+        {
+            System.Diagnostics.Debug.WriteLine("ANIMO");
+
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await Task.Delay(500);
+
+                await contentView.ScaleTo(1.08, 2000, Easing.BounceIn);
+                await contentView.ScaleTo(1, 250, Easing.BounceOut);
+            });
 
         }
 
@@ -633,6 +806,7 @@ namespace MVVMCrud.ViewModels.Base
             if (SetupDefaultAddItemMessage())
             {
                 Utils.Utils.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetNewItemUploadText());
+
             }
         }
 
@@ -646,8 +820,33 @@ namespace MVVMCrud.ViewModels.Base
             if (SetupDefaultDeleteItemMessage())
             {
                 Utils.Utils.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetDeleteItemUploadText());
+
             }
         }
 
+        public override async void TlbSendClick()
+        {
+            var l = new List<TItem>();
+
+            foreach (var cellVM in ItemsList.Where(x => x.IsSelected).ToList())
+            {
+                l.Add(cellVM?.Item);
+            }
+
+            var navParams = new NavigationParameters
+            {
+                { "selectedItems", l}
+            };
+
+            var navResult = await NavigationService.GoBackAsync(navParams, useModalNavigation: true);
+        }
     }
+
+    public class ScroolToItem
+    {
+        public object Item { get; set; }
+        public bool IsAnimate { get; set; }
+    }
+
+    
 }

@@ -2,6 +2,7 @@
 using Prism.AppModel;
 using Prism.Mvvm;
 using Prism.Navigation;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace MVVMCrud.ViewModels.Base
@@ -74,7 +75,6 @@ namespace MVVMCrud.ViewModels.Base
 
         public void Destroy()
         {
-
         }
 
         public virtual string SetupEndpoint()
@@ -87,5 +87,14 @@ namespace MVVMCrud.ViewModels.Base
             return string.Empty;
         }
 
+        public virtual HttpClient GetHttpClient()
+        {
+            var instance = MVVMCrudApplication.Instance;
+            if (instance != null)
+            {
+                return instance.HttpClient;
+            }
+            return new HttpClient();
+        }
     }
 }

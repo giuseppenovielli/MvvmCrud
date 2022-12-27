@@ -9,12 +9,14 @@ namespace MVVMCrud.Example.ViewModels.Main
 {
     public class MainPageViewModel : BaseViewModel
     {
-        public ICommand PostPageCommand { get; set; }
+        public ICommand PostPageCollectionViewCommand { get; set; }
         public ICommand PostPageListViewCommand { get; set; }
+        public ICommand PostPageCollectionViewScroolToItemCommand { get; set; }
+        public ICommand PostPageListViewScroolToItemCommand { get; set; }
 
         public MainPageViewModel(INavigationService navigationService): base(navigationService)
         {
-            PostPageCommand = new Command(async (obj) =>
+            PostPageCollectionViewCommand = new Command(async (obj) =>
             {
                 var navResult = await NavigationService.NavigateAsync(nameof(PostPage));
             });
@@ -23,8 +25,38 @@ namespace MVVMCrud.Example.ViewModels.Main
             {
                 var navResult = await NavigationService.NavigateAsync(nameof(PostListViewPage));
             });
+
+            PostPageCollectionViewScroolToItemCommand = new Command(async (obj) =>
+            {
+                //{
+                //    "userId": 1,
+                //    "id": 5,
+                //    "title": "nesciunt quas odio",
+                //    "body": "repudiandae veniam quaerat sunt sed\nalias aut fugiat sit autem sed est\nvoluptatem omnis possimus esse voluptatibus quis\nest aut tenetur dolor neque"
+                //},
+                var navParams = new NavigationParameters
+                {
+                    { "id", 5 }
+                };
+
+                var navResult = await NavigationService.NavigateAsync(nameof(PostPage), navParams);
+            });
+
+            PostPageListViewScroolToItemCommand = new Command(async (obj) =>
+            {
+                //{
+                //    "userId": 1,
+                //    "id": 5,
+                //    "title": "nesciunt quas odio",
+                //    "body": "repudiandae veniam quaerat sunt sed\nalias aut fugiat sit autem sed est\nvoluptatem omnis possimus esse voluptatibus quis\nest aut tenetur dolor neque"
+                //},
+                var navParams = new NavigationParameters
+                {
+                    { "id", 5 }
+                };
+
+                var navResult = await NavigationService.NavigateAsync(nameof(PostListViewPage), navParams);
+            });
         }
-
-
     }
 }

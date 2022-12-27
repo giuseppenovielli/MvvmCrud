@@ -23,23 +23,21 @@ namespace MVVMCrud.Example.ViewModels.Post
             return Constants.Constants.METHOD_POST;
         }
 
+        public override async void AddNewItem(PostItem item)
+        {
+            SetupAddItemMessage();
+            await SetupGetItems();
+        }
+
+        public override async void UpdateEditItem(NewEditItem<PostItem> newEditItem)
+        {
+            SetupEditItemMessage();
+            await SetupGetItems();
+        }
+
         public override List<PostCellViewModel> PerformSearchSetup(string newText)
         {
-            var newTextLower = newText.ToLower();
-            return ItemsList.Where((PostCellViewModel arg1, int arg2) =>
-            {
-                var item = arg1.Item;
-                if (
-                        !string.IsNullOrWhiteSpace(item.Title)
-                        &&
-                        item.Title.ToLower().Contains(newTextLower)
-                    )
-                {
-                    return true;
-                }
-                return false;
-
-            }).ToList();
+            return ItemsList.Where(x => x.Item.Title.Contains(newText.ToLower())).ToList();
         }
 
         public override string SetupDetailPageName()

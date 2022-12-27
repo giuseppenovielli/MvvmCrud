@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Resources;
@@ -58,12 +59,18 @@ namespace MVVMCrud
 
         public HttpClient HttpClient { get; set; }
 
+        public List<string> IdMessagingCenterActiveList { get; set; }
+
         public MVVMCrudApplication()
         {
             Instance = this;
 
+            IdMessagingCenterActiveList = new List<string>();
+
             HttpClient = SetupHttpClient();
         }
+
+        public virtual HttpClient SetupHttpClient() => new HttpClient();
 
         public static string GetConfirmDeleteText() => Instance?.ConfirmDeleteText != null ? Instance.ConfirmDeleteText : AppResources.msg_confirm_delete;
         public static string GetConfirmUploadText() => Instance?.ConfirmUploadText != null ? Instance.ConfirmUploadText : AppResources.msg_confirm_upload;
@@ -73,7 +80,6 @@ namespace MVVMCrud
         public static string GetLoadingText() => Instance?.LoadingMoreText != null ? Instance.LoadingText : AppResources.msg_loading;
         public static string GetOKText() => Instance?.OKText != null ? Instance.OKText : AppResources.ok;
         public static string GetCancelText() => Instance?.CancelText != null ? Instance.CancelText : AppResources.cancel;
-
         public static string GetSearchPlaceholder() => Instance?.SearchPlaceholder != null ? Instance.SearchPlaceholder : AppResources.placeholder_search;
         public static string GetNotFound() => Instance?.NotFound != null ? Instance.NotFound : AppResources.msg_search_not_result_found;
         public static string GetNoConnectionText() => Instance?.NoConnectionText != null ? Instance.NoConnectionText : AppResources.error_internet_connection;
@@ -93,6 +99,15 @@ namespace MVVMCrud
         public virtual BaseRequestSetupResponse SetupBaseRequestSetupResponse() => new BaseRequestSetupResponse();
 
 
+        public virtual List<JsonConverter> GetJsonConverters()
+        {
+            var l = new List<JsonConverter>
+            {
+            };
+
+            return l;
+
+        }
         public virtual void SetupPaginationItem(string item, HttpResponseHeaders responseHeader, PaginationItem paginationItem){}
 
         public virtual void SetupRootItemBase(RootItemBase rootItemBase){}
@@ -101,28 +116,44 @@ namespace MVVMCrud
 
         public virtual void SetupPaginationRequest(List<KeyValuePair<string, string>> dataGet,
                                                     bool pagination,
-                                                    int paginationSize){}
+                                                    int paginationSize)
+        { }
 
-        public virtual JsonSerializerSettings SetupJsonSettingsSerialize()
+        public virtual JsonSerializerSettings SetupJsonSettingsSerialize(bool ignoreJsonProperty = true)
         {
             var settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
             };
+
+            if (ignoreJsonProperty)
+            {
+                settings.ContractResolver = new IgnoreJsonPropertyContractResolver();
+            }
+
+            settings.Converters = GetJsonConverters();
+
             return settings;
         }
 
-        public virtual JsonSerializerSettings SetupJsonSettingsDeserialize()
+
+        public virtual JsonSerializerSettings SetupJsonSettingsDeserialize(bool ignoreJsonProperty=false)
         {
             var settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
                 ContractResolver = new IgnoreJsonPropertyContractResolver()
             };
+
+            if (ignoreJsonProperty)
+            {
+                settings.ContractResolver = new IgnoreJsonPropertyContractResolver();
+            }
+
+            settings.Converters = GetJsonConverters();
+
             return settings;
         }
-
-        public virtual HttpClient SetupHttpClient() => HttpClient = new HttpClient();
 
         public static void RegisterServices(IContainerRegistry containerRegistry)
         {
@@ -130,6 +161,20 @@ namespace MVVMCrud
 
             containerRegistry.RegisterSingleton<IRequestProvider, RequestProvider>();
             containerRegistry.RegisterSingleton<IRequestService, RequestService>();
+        }
+
+        public static string GetLastPageUUID()
+        {
+            var uuid = string.Empty;
+            if (Instance != null)
+            {
+                var uuidInstance = Instance.IdMessagingCenterActiveList.LastOrDefault();
+                if (!string.IsNullOrWhiteSpace(uuidInstance))
+                {
+                    uuid = uuidInstance;
+                }
+            }
+            return uuid;
         }
     }
 

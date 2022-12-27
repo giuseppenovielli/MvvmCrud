@@ -1,4 +1,6 @@
-﻿using System.Windows.Input;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
+using MVVMCrud.ViewModels.Base;
 using Xamarin.Forms;
 
 namespace MVVMCrud.Controls
@@ -9,15 +11,30 @@ namespace MVVMCrud.Controls
 
         public MVVMCrudCollectionView()
         {
+            var uuid = MVVMCrudApplication.GetLastPageUUID();
+
             SetBinding(SelectedItemProperty, new Binding() { Path = "ListSelectedItem" });
             SetBinding(RemainingItemsThresholdProperty, new Binding() { Path = "ItemTreshold" });
             SetBinding(RemainingItemsThresholdReachedCommandProperty, new Binding() { Path = nameof(ItemsThresholdReachedCommand) });
             SetBinding(EmptyViewProperty, new Binding() { Path = "EmptyView" });
             SetBinding(FooterProperty, new Binding() { Path = "LoadingMoreView" });
 
-            MessagingCenter.Subscribe<object, object>(this, "ListView_OnScrool", (sender, args) =>
+            var message = string.Format("ListView_OnScrool {0}", uuid);
+            MessagingCenter.Subscribe<object, ScroolToItem>(this, message, async (sender, args) =>
             {
-                ScrollTo(args);
+                if (args != null)
+                {
+                    ScrollTo(args.Item, -1, ScrollToPosition.Center);
+                    await Task.Delay(300);
+
+                    if (args.IsAnimate)
+                    {
+                        var message2 = string.Format("ListView_ScroolToItemAnimate {0}", uuid);
+                        MessagingCenter.Send(this as object, message2, args);
+                    }
+
+                }
+                
             });
         }
 

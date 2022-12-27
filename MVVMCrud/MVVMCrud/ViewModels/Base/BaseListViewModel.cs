@@ -8,7 +8,7 @@ namespace MVVMCrud.ViewModels.Base
 {
     public class BaseListViewModel : BaseViewModel
     {
-        public EmptyViewModel EmptyVM { get; set; }
+        public EmptyViewModel EmptyVM { get; }
         public EmptyView EmptyView { get; set; }
 
 
@@ -33,8 +33,8 @@ namespace MVVMCrud.ViewModels.Base
 
         public string SearchBarPlaceholder { get; set; }
         public string SearchBarMessageNotFound { get; set; }
-        public bool SearchBarIsVisible { get;  set; }
-        public double SearchBarOpacity { get;  set; }
+        public bool SearchBarIsVisible { get; set; }
+        public double SearchBarOpacity { get; set; }
         string _searchText;
         public string SearchText
         {
@@ -51,26 +51,13 @@ namespace MVVMCrud.ViewModels.Base
         public ICommand TlbOptionsCommandClick { get; private set; }
 
         public BaseListViewModel(
-            INavigationService navigationService = null,
+            INavigationService navigationService,
             IRequestService requestService = null) : base(navigationService, requestService)
         {
 
-            RefreshCommand = new Command(ListViewRefresh);
-
-            TlbAddCommandClick = new Command(TlbAddClick);
-            TlbSendCommandClick = new Command(TlbSendClick);
-            TlbOptionsCommandClick = new Command(TlbOptionsClick);
-
-            SetSearchBarPlaceholder(GetSearchPlaceholder());
-            SetSearchBarMessageNotFound(GetNotFound());
-
-        }
-
-        public override void Initialize(INavigationParameters parameters)
-        {
-            base.Initialize(parameters);
-
-            EmptyVM = new EmptyViewModel(NavigationService);
+            EmptyVM = new EmptyViewModel(NavigationService)
+            {
+            };
 
             EmptyView = new EmptyView()
             {
@@ -82,13 +69,17 @@ namespace MVVMCrud.ViewModels.Base
                 ListViewRefresh();
             };
 
+            RefreshCommand = new Command(ListViewRefresh);
+
+            TlbAddCommandClick = new Command(TlbAddClick);
+            TlbSendCommandClick = new Command(TlbSendClick);
+            TlbOptionsCommandClick = new Command(TlbOptionsClick);
+
+            SetSearchBarPlaceholder(GetSearchPlaceholder());
+            SetSearchBarMessageNotFound(GetNotFound());
+
             SearchBarOpacity = 1;
             SearchBarIsVisible = true;
-        }
-
-        public virtual ContentView GetEmptyView()
-        {
-            return MVVMCrudApplication.GetEmptyView();
         }
 
         public virtual string GetSearchPlaceholder()
@@ -135,11 +126,11 @@ namespace MVVMCrud.ViewModels.Base
             
         }
 
-        public virtual void HideMessage(bool addSearchBar = true)
+        public virtual void HideMessage(bool addSearchBar = true, bool listViewIsVisible = true)
         {
 
             EmptyVM.HideMessage();
-            ListViewIsVisible = true;
+            ListViewIsVisible = listViewIsVisible;
 
             if (addSearchBar)
             {
@@ -149,11 +140,11 @@ namespace MVVMCrud.ViewModels.Base
 
         }
 
-        public virtual void ShowMessage(string message, bool showRefresh = false, bool removeSeachBar = false)
+        public virtual void ShowMessage(string message, bool showRefresh = false, bool removeSeachBar = false, bool listViewIsVisible = false)
         {
             EmptyVM.ShowMessage(message);
             EmptyVM.BtnRefreshIsVisible = showRefresh;
-            ListViewIsVisible = false;
+            ListViewIsVisible = listViewIsVisible;
 
             if (removeSeachBar)
             {

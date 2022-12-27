@@ -24,13 +24,12 @@ namespace MVVMCrud.ViewModels.Base
         public BaseItemEditAdvancedViewModel(
             INavigationService navigationService,
             IRequestService requestService) : base(navigationService, requestService)
-        { 
+        {
             Position = -1;
             Section = -1;
-
         }
 
-        public override void Initialize(INavigationParameters parameters)
+        public override async void Initialize(INavigationParameters parameters)
         {
             base.Initialize(parameters);
 
@@ -41,8 +40,8 @@ namespace MVVMCrud.ViewModels.Base
 
             if (parameters.ContainsKey("itemSerialized"))
             {
-                var itemSerialized = parameters.GetValue<string>("itemSerialized");
-                Position = parameters.GetValue<int>("position");
+                var itemSerialized = parameters["itemSerialized"] as string;
+                Position = (int)parameters["position"];
 
                 if (!string.IsNullOrWhiteSpace(itemSerialized))
                 {
@@ -54,6 +53,7 @@ namespace MVVMCrud.ViewModels.Base
 
                     ItemInput = SetupDeserializeItemInput(itemSerialized);
 
+                    await SetupGetItem(ItemInput, item);
                     SetupManageItemInput(ItemInput, item);
                 }
             }
@@ -68,8 +68,6 @@ namespace MVVMCrud.ViewModels.Base
                 ItemInput = new TItemInput();
             }
 
-            TitlePage = SetupTitlePage();
-
             if (string.IsNullOrWhiteSpace(Endpoint))
             {
                 Endpoint = SetupEndpoint();
@@ -77,12 +75,6 @@ namespace MVVMCrud.ViewModels.Base
 
             SetupValidations();
             SetupInterface();
-        }
-
-
-        public virtual bool SetupIsDeserializeItem()
-        {
-            return false;
         }
 
         public virtual JsonSerializerSettings SetupJsonDeserializerSettings()
@@ -95,19 +87,47 @@ namespace MVVMCrud.ViewModels.Base
             return MVVMCrudApplication.Instance.SetupJsonSettingsSerialize();
         }
 
+        public virtual bool SetupIsDeserializeItem()
+        {
+            return false;
+        }
+
         public virtual TItem SetupDeserializeItem(string itemSerialized)
         {
-            return JsonConvert.DeserializeObject<TItem>(itemSerialized, SetupJsonDeserializerSettings());
+            try
+            {
+                return JsonConvert.DeserializeObject<TItem>(itemSerialized, SetupJsonDeserializerSettings());
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+            }
+            return null;
+            
         }
 
 
         public virtual TItemInput SetupDeserializeItemInput(string itemSerialized)
         {
-            return JsonConvert.DeserializeObject<TItemInput>(itemSerialized, SetupJsonDeserializerSettings());
+            try
+            {
+                return JsonConvert.DeserializeObject<TItemInput>(itemSerialized, SetupJsonDeserializerSettings());
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+            }
+
+            return new TItemInput();
         }
 
         public virtual void SetupManageItemInput(TItemInput itemInput, TItem item)
         {
+        }
+
+        public virtual async Task SetupGetItem(TItemInput itemInput, TItem item)
+        {
+            await Task.CompletedTask;
         }
 
         public virtual void SetupValidations()
@@ -161,7 +181,7 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual void SetupInterface()
         {
-
+            TitlePage = SetupTitlePage();
         }
 
         public virtual void SetupItemBeforeUpdate(TItemInput itemInput)
@@ -194,7 +214,8 @@ namespace MVVMCrud.ViewModels.Base
 
                 if (await DisplayUploadConfirm(SetupMessageUploadConfirm))
                 {
-                    await UploadItem();
+                    await UploadAndReturnItem();
+                    
                 }
 
             }
@@ -225,21 +246,33 @@ namespace MVVMCrud.ViewModels.Base
 
         }
 
-        async Task UploadItem()
+        public virtual List<HttpStatusCode> GetUploadItemHttpStatusCodes()
         {
             List<HttpStatusCode> httpCode = null;
             if (string.IsNullOrWhiteSpace(ItemInput.Id))
             {
                 httpCode = new List<HttpStatusCode>() { HttpStatusCode.Created };
             }
+            return httpCode;
+        }
 
-            var rootItem = await RequestService.RequestItem<TItemRoot, TItem>(
+        public virtual async Task UploadAndReturnItem()
+        {
+            AfterUploadItem(await UploadItem());
+        }
+
+        public virtual async Task<TItemRoot> UploadItem()
+        {
+            return await RequestService.RequestItem<TItemRoot, TItem>(
                 Request,
                 TitlePage,
                 false,
                 true,
-                httpCode);
+                GetUploadItemHttpStatusCodes());
+        }
 
+        public virtual void AfterUploadItem(TItemRoot rootItem)
+        {
             if (rootItem != null)
             {
                 var item = rootItem.Item;
@@ -256,27 +289,26 @@ namespace MVVMCrud.ViewModels.Base
             return await SetupRequest(ItemInput);
         }
 
+        public virtual JsonSerializerSettings GetJsonSettingsSerialize()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+            };
+            settings.Converters = MVVMCrudApplication.Instance.GetJsonConverters();
+
+            return settings;
+        }
+
+        public virtual MultipartFormDataContent GetFormDataToUpload(TItemInput item)
+        {
+            return Utils.Utils.GetFormDataToUpload(item, GetJsonSettingsSerialize());
+        }
+
         public virtual async Task<TItemRoot> SetupRequest(TItemInput item)
         {
             if (!string.IsNullOrWhiteSpace(Endpoint))
             {
-                var jsonSettings = SetupJsonSerializerSettings();
-                var content = JsonConvert.SerializeObject(item, jsonSettings);
-
-                var values = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
-
-                var formData = new MultipartFormDataContent();
-                foreach (var keyValue in values)
-                {
-                    var key = keyValue.Key;
-                    var value = keyValue.Value;
-
-                    if (value != null)
-                    {
-                        formData.Add(new StringContent(value.ToString()), key);
-                    }
-
-                }
 
                 string pk = null;
                 if (!string.IsNullOrWhiteSpace(item.Id))
@@ -284,7 +316,7 @@ namespace MVVMCrud.ViewModels.Base
                     pk = item.Id;
                 }
 
-                return await RequestService.CreateUpdate<TItemRoot, TItem>(Endpoint, pk, formData);
+                return await RequestService.CreateUpdate<TItemRoot, TItem>(Endpoint, pk, GetFormDataToUpload(item), httpClient: GetHttpClient());
             }
 
             return await Task.FromResult<TItemRoot>(null);

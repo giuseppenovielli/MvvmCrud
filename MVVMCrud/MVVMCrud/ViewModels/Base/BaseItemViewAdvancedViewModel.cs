@@ -33,10 +33,15 @@ namespace MVVMCrud.ViewModels.Base
                 {
                     IdLong = Convert.ToInt64(Id);
                 }
-                catch (System.Exception) { }
+                catch (System.Exception){}
 
                 _ = GetItem();
             }
+        }
+
+        public virtual string SetupUrl()
+        {
+            return string.Empty;
         }
 
         public override void PageRefresh()
@@ -50,7 +55,7 @@ namespace MVVMCrud.ViewModels.Base
         {
             if (!string.IsNullOrWhiteSpace(Endpoint))
             {
-                return await RequestService.RequestDefaultRetrieveItem<TItemRoot, TItem>(Endpoint, Id.ToString(), TitlePage);
+                return await RequestService.RequestDefaultRetrieveItem<TItemRoot, TItem>(Endpoint, Id.ToString(), TitlePage, httpClient: GetHttpClient());
             }
 
             return await Task.FromResult<TItemRoot>(null);

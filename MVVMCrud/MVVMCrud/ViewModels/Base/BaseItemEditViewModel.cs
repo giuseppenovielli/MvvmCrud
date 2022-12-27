@@ -7,7 +7,7 @@ namespace MVVMCrud.ViewModels.Base
 {
     public class BaseItemEditViewModel : BaseViewModel
     {
-        public EmptyViewModel EmptyVM { get; set; }
+        public EmptyViewModel EmptyVM { get; }
 
         public bool ItemIsVisible { get; set; }
 
@@ -18,19 +18,14 @@ namespace MVVMCrud.ViewModels.Base
             INavigationService navigationService,
             IRequestService requestService = null) : base(navigationService, requestService)
         {
-            TlbAddCommandClick = new Command(TlbAddClick);
-            TlbSendCommandClick = new Command(TlbSendClick);
-        }
-
-        public override void Initialize(INavigationParameters parameters)
-        {
-            base.Initialize(parameters);
-
             EmptyVM = new EmptyViewModel(NavigationService);
             EmptyVM.OnRefresh += delegate
             {
                 PageRefresh();
             };
+
+            TlbAddCommandClick = new Command(TlbAddClick);
+            TlbSendCommandClick = new Command(TlbSendClick);
         }
 
         public virtual void PageRefresh()

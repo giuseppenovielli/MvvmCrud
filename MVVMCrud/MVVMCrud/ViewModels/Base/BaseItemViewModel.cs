@@ -7,7 +7,7 @@ namespace MVVMCrud.ViewModels.Base
 {
     public class BaseItemViewModel : BaseViewModel
     {
-        public EmptyViewModel EmptyVM { get; set; }
+        public EmptyViewModel EmptyVM { get; }
 
         public bool ItemIsVisible { get; set; }
 
@@ -18,19 +18,14 @@ namespace MVVMCrud.ViewModels.Base
             INavigationService navigationService,
             IRequestService requestService = null) : base(navigationService, requestService)
         {
-            RefreshCommand = new Command(PageRefresh);
-
-        }
-
-        public override void Initialize(INavigationParameters parameters)
-        {
-            base.Initialize(parameters);
 
             EmptyVM = new EmptyViewModel(NavigationService);
             EmptyVM.OnRefresh += delegate
             {
                 PageRefresh();
             };
+            RefreshCommand = new Command(PageRefresh);
+
         }
 
         public virtual void PageRefresh()

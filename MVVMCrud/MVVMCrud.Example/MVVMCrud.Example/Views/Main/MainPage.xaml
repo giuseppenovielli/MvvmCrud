@@ -14,12 +14,22 @@
 
         <Button
             Text="Post Page CollectionView"
-            Command="{Binding PostPageCommand}"/>
+            Command="{Binding PostPageCollectionViewCommand}"/>
 
 
         <Button
             Text="Post Page ListView"
             Command="{Binding PostPageListViewCommand}"/>
+
+
+        <Button
+            Text="Post Page CollectionView ScroolToItem"
+            Command="{Binding PostPageCollectionViewScroolToItemCommand}"/>
+
+
+        <Button
+            Text="Post Page ListView ScroolToItem"
+            Command="{Binding PostPageListViewScroolToItemCommand}"/>
 
 
     </StackLayout>

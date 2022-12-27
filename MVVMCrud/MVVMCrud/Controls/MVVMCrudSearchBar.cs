@@ -6,6 +6,8 @@ namespace MVVMCrud.Controls
     {
         public MVVMCrudSearchBar()
         {
+          var uuid = MVVMCrudApplication.GetLastPageUUID();
+          
             SetBinding(TextProperty, new Binding() { Path = "SearchText" });
             SetBinding(PlaceholderProperty, new Binding() { Path = "SearchBarPlaceholder" });
             SetBinding(IsVisibleProperty, new Binding() { Path = "SearchBarIsVisible" });
@@ -13,7 +15,8 @@ namespace MVVMCrud.Controls
 
             Focused += (object sender, FocusEventArgs e) =>
             {
-                MessagingCenter.Send(this as object, "SearchBar_Focused", e.IsFocused);
+              var message = string.Format("SearchBar_Focused {0}", uuid);
+              MessagingCenter.Send(this as object, message, e.IsFocused);
             };
         }
     }

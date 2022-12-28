@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<mvvmcrudViews:BaseContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="MVVMCrud.Example.Views.Comment.CommentCell"
+    xmlns:mvvmcrudViews="clr-namespace:MVVMCrud.Views.Base;assembly=MVVMCrud">
+
+    <StackLayout>
+
+        <StackLayout
+            Spacing="20"
+            Margin="10">
+
+            <StackLayout
+                Spacing="0">
+
+                <Label
+                    FontSize="Medium"
+                    TextColor="Black"
+                    Text="{Binding Item.Name}"/>
+
+                <Label
+                    FontSize="Small"
+                    TextColor="Black"
+                    Text="{Binding Item.Email}"/>
+
+            </StackLayout>
+
+
+            <Label
+                FontSize="Medium"
+                TextColor="Black"
+                Text="{Binding Item.Body}"/>
+
+
+        </StackLayout>
+        
+
+        <BoxView
+            Color="LightGray"
+            HeightRequest="2"/>
+
+    </StackLayout>
+
+</mvvmcrudViews:BaseContentView>

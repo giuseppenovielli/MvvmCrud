@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<mvvmcrudViews:BaseContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="MVVMCrud.Example.Views.Post.PostCell"
+    xmlns:mvvmcrudViews="clr-namespace:MVVMCrud.Views.Base;assembly=MVVMCrud"
+    xmlns:viewmodelsPost="clr-namespace:MVVMCrud.Example.ViewModels.Post"
+    x:DataType="viewmodelsPost:PostCellViewModel">
+
+    <StackLayout>
+
+        <StackLayout
+            Spacing="20"
+            Margin="10, 10,20,10">
+
+            <Grid
+                
+                ColumnDefinitions="*, Auto, Auto">
+
+                <Label
+                    Grid.Column="0"
+                    HorizontalOptions="FillAndExpand"
+                    FontSize="Medium"
+                    VerticalOptions="Center"
+                    TextColor="Black"
+                    Text="{Binding Item.Title}"/>
+
+                <Label
+                    Margin="10,0,0,0"
+                    Grid.Column="1"
+                    Padding="5"
+                    VerticalOptions="Center"
+                    Text="Edit">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding EditClickCommand}"
+                            CommandParameter="{Binding .}"
+                            NumberOfTapsRequired="1">
+                        </TapGestureRecognizer>
+                    </Label.GestureRecognizers>
+                </Label>
+
+                <Label
+                    Grid.Column="2"
+                    Padding="5"
+                    VerticalOptions="Center"
+                    Text="Delete">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding DeleteClickCommand}"
+                            CommandParameter="{Binding .}"
+                            NumberOfTapsRequired="1">
+                        </TapGestureRecognizer>
+                    </Label.GestureRecognizers>
+                </Label>
+
+            </Grid>
+
+
+            <Label
+                HorizontalOptions="FillAndExpand"
+                FontSize="Medium"
+                TextColor="Black"
+                Text="{Binding Item.Body}"/>
+
+            <Button
+                IsVisible="{Binding ShowCommentIsVisible}"
+                HorizontalOptions="End"
+                Text="Show Comments"
+                CommandParameter="{Binding .}"
+                Command="{Binding DetailPageClickCommand}"/>
+
+
+        </StackLayout>
+        
+
+        <BoxView
+            Color="LightGray"
+            HeightRequest="5"/>
+
+    </StackLayout>
+
+</mvvmcrudViews:BaseContentView>

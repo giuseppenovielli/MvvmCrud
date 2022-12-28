@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    IsVisible="{Binding EmptyPageIsVisible}"
+    Padding="10"
+    x:Class="MVVMCrud.Views.EmptyView"
+    xmlns:viewmodels="clr-namespace:MVVMCrud.ViewModels"
+    x:DataType="viewmodels:EmptyViewModel">
+
+    <StackLayout
+        Spacing="10"
+                VerticalOptions="Center">
+
+        <Label
+            HorizontalTextAlignment="Center"
+            Text="{Binding Message}">
+        </Label>
+
+        <Button
+            HorizontalOptions="Center"
+            IsVisible="{Binding BtnRefreshIsVisible}"
+            Command="{Binding RefreshClickCommand}"
+            CommandParameter="{Binding .}"
+            Text="{Binding RefreshText}"/>
+
+    </StackLayout>
+
+  
+</ContentView>

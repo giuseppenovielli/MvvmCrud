@@ -20,8 +20,7 @@ namespace MVVMCrud.ViewModels
 
         
 
-        public EmptyViewModel(
-            INavigationService navigationService) : base(navigationService)
+        public EmptyViewModel()
         {
             RefreshText = GetRefreshText();
             RefreshClickCommand = new Command(RefreshClick);

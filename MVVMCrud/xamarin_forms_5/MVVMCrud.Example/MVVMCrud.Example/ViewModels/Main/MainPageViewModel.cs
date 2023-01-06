@@ -7,7 +7,7 @@ using Xamarin.Forms;
 
 namespace MVVMCrud.Example.ViewModels.Main
 {
-    public class MainPageViewModel : BaseViewModel
+    public class MainPageViewModel : BasePageViewModel
     {
         public ICommand PostPageCollectionViewCommand { get; set; }
         public ICommand PostPageListViewCommand { get; set; }

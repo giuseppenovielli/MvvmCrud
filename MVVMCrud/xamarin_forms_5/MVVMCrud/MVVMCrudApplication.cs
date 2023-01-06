@@ -12,6 +12,7 @@ using MVVMCrud.Utils;
 using MVVMCrud.Utils.Request;
 using MVVMCrud.Views;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Prism.Ioc;
 using Xamarin.Forms;
 
@@ -108,9 +109,9 @@ namespace MVVMCrud
             return l;
 
         }
-        public virtual void SetupPaginationItem(string item, HttpResponseHeaders responseHeader, PaginationItem paginationItem){}
+        public virtual void SetupPaginationItem(string item, HttpResponseHeaders responseHeader, PaginationItem paginationItem) { }
 
-        public virtual void SetupRootItemBase(RootItemBase rootItemBase){}
+        public virtual void SetupRootItemBase(RootItemBase rootItemBase) { }
 
         public virtual void SetupPaginationRequest(RootItemBase rootItemBase) { }
 
@@ -137,7 +138,7 @@ namespace MVVMCrud
         }
 
 
-        public virtual JsonSerializerSettings SetupJsonSettingsDeserialize(bool ignoreJsonProperty=false)
+        public virtual JsonSerializerSettings SetupJsonSettingsDeserialize(bool ignoreJsonProperty = false)
         {
             var settings = new JsonSerializerSettings
             {
@@ -151,6 +152,16 @@ namespace MVVMCrud
             }
 
             settings.Converters = GetJsonConverters();
+
+            return settings;
+        }
+
+        public virtual JsonSerializerSettings SetupJsonUploadSettingsSerialize()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+            };
 
             return settings;
         }

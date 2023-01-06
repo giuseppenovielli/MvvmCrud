@@ -9,61 +9,61 @@
 
     <StackLayout>
 
-        <StackLayout
-            Spacing="20"
-            Margin="10, 10,20,10">
+        <Grid
+            RowSpacing="20"
+            ColumnSpacing="10"
+            RowDefinitions="Auto, Auto, Auto"
+            ColumnDefinitions="*, Auto, Auto"
+            Margin="10, 15,20,10">
 
-            <Grid
-                
-                ColumnDefinitions="*, Auto, Auto">
-
-                <Label
-                    Grid.Column="0"
-                    HorizontalOptions="FillAndExpand"
-                    FontSize="Medium"
-                    VerticalOptions="Center"
-                    TextColor="Black"
-                    Text="{Binding Item.Title}"/>
-
-                <Label
-                    Margin="10,0,0,0"
-                    Grid.Column="1"
-                    Padding="5"
-                    VerticalOptions="Center"
-                    Text="Edit">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer
-                            Command="{Binding EditClickCommand}"
-                            CommandParameter="{Binding .}"
-                            NumberOfTapsRequired="1">
-                        </TapGestureRecognizer>
-                    </Label.GestureRecognizers>
-                </Label>
-
-                <Label
-                    Grid.Column="2"
-                    Padding="5"
-                    VerticalOptions="Center"
-                    Text="Delete">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer
-                            Command="{Binding DeleteClickCommand}"
-                            CommandParameter="{Binding .}"
-                            NumberOfTapsRequired="1">
-                        </TapGestureRecognizer>
-                    </Label.GestureRecognizers>
-                </Label>
-
-            </Grid>
-
+             <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                FontSize="Medium"
+                VerticalOptions="Center"
+                TextColor="Black"
+                Text="{Binding Item.Title}"/>
 
             <Label
-                HorizontalOptions="FillAndExpand"
-                FontSize="Medium"
+                Grid.Row="0"
+                Grid.Column="1"
+                Padding="5"
+                VerticalOptions="Center"
+                Text="Edit">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer
+                        Command="{Binding EditClickCommand}"
+                        CommandParameter="{Binding .}"
+                        NumberOfTapsRequired="1">
+                    </TapGestureRecognizer>
+                </Label.GestureRecognizers>
+            </Label>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="2"
+                Padding="5"
+                VerticalOptions="Center"
+                Text="Delete">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer
+                        Command="{Binding DeleteClickCommand}"
+                        CommandParameter="{Binding .}"
+                        NumberOfTapsRequired="1">
+                    </TapGestureRecognizer>
+                </Label.GestureRecognizers>
+            </Label>
+
+            <Label
+                Grid.Row="1"
+                Grid.ColumnSpan="3"
+                FontSize="Small"
                 TextColor="Black"
                 Text="{Binding Item.Body}"/>
 
             <Button
+                Grid.Row="2"
+                Grid.ColumnSpan="3"
                 IsVisible="{Binding ShowCommentIsVisible}"
                 HorizontalOptions="End"
                 Text="Show Comments"
@@ -71,7 +71,7 @@
                 Command="{Binding DetailPageClickCommand}"/>
 
 
-        </StackLayout>
+        </Grid>
         
 
         <BoxView

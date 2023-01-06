@@ -20,8 +20,12 @@ namespace MVVMCrud.Controls
             SetBinding(IsRefreshingProperty, new Binding() { Path = "IsRefreshing" });
             SetBinding(RefreshCommandProperty, new Binding() { Path = nameof(RefreshCommand) });
             SetBinding(FooterProperty, new Binding() { Path = "LoadingMoreView" });
+            SetBinding(ItemsSourceProperty, new Binding() { Path = "ItemsSource" });
 
             HasUnevenRows = true;
+            SeparatorVisibility = SeparatorVisibility.None;
+            IsPullToRefreshEnabled = true;
+            SelectionMode = ListViewSelectionMode.None;
 
             ItemAppearing += (sender, e) =>
             {

@@ -12,7 +12,7 @@ namespace MVVMCrud.Services.RequestProvider
         {
         }
 
-        public async Task<RequestResponseItem> GetAsync(string apiUrl, HttpClient httpClient = null)
+        public async Task<RequestResponseItem> GetAsync(string apiUrl, HttpClient httpClient = null, FormUrlEncodedContent content_query = null)
         {
             System.Diagnostics.Debug.WriteLine("\nMVVMCrud GetAsync");
             System.Diagnostics.Debug.WriteLine("GetAsync apiUrl = " + apiUrl);
@@ -21,10 +21,14 @@ namespace MVVMCrud.Services.RequestProvider
 
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
-                var client = CreateHttpClient(httpClient);
+                var client = RequestProvider.CreateHttpClient(httpClient);
 
                 try
                 {
+                    if (content_query != null)
+                    {
+                        apiUrl += "?" + await content_query.ReadAsStringAsync();
+                    }
 
                     var response = await client.GetAsync(apiUrl);
 
@@ -69,7 +73,7 @@ namespace MVVMCrud.Services.RequestProvider
 
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
-                var client = CreateHttpClient(httpClient);
+                var client = RequestProvider.CreateHttpClient(httpClient);
 
                 try
                 {
@@ -145,7 +149,7 @@ namespace MVVMCrud.Services.RequestProvider
 
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
-                var client = CreateHttpClient(httpClient);
+                var client = RequestProvider.CreateHttpClient(httpClient);
 
                 try
                 {
@@ -191,7 +195,7 @@ namespace MVVMCrud.Services.RequestProvider
 
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
-                var client = CreateHttpClient(httpClient);
+                var client = RequestProvider.CreateHttpClient(httpClient);
 
                 try
                 {
@@ -234,7 +238,7 @@ namespace MVVMCrud.Services.RequestProvider
 
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
-                var client = CreateHttpClient(httpClient);
+                var client = RequestProvider.CreateHttpClient(httpClient);
 
                 try
                 {
@@ -281,7 +285,7 @@ namespace MVVMCrud.Services.RequestProvider
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
 
-                var client = CreateHttpClient(httpClient);
+                var client = RequestProvider.CreateHttpClient(httpClient);
 
                 try
                 {
@@ -324,7 +328,7 @@ namespace MVVMCrud.Services.RequestProvider
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
 
-                var client = CreateHttpClient(httpClient, header: header);
+                var client = RequestProvider.CreateHttpClient(httpClient, header: header);
 
                 try
                 {
@@ -357,7 +361,7 @@ namespace MVVMCrud.Services.RequestProvider
             return responseItem;
         }
 
-        HttpClient CreateHttpClient(HttpClient httpClient = null, bool header = true)
+        static HttpClient CreateHttpClient(HttpClient httpClient = null, bool header = true)
         {
             var httpClientInstance = httpClient;
             if (header)

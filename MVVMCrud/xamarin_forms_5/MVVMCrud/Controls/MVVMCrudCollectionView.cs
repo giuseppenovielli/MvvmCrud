@@ -18,6 +18,7 @@ namespace MVVMCrud.Controls
             SetBinding(RemainingItemsThresholdReachedCommandProperty, new Binding() { Path = nameof(ItemsThresholdReachedCommand) });
             SetBinding(EmptyViewProperty, new Binding() { Path = "EmptyView" });
             SetBinding(FooterProperty, new Binding() { Path = "LoadingMoreView" });
+            SetBinding(ItemsSourceProperty, new Binding() { Path = "ItemsSource" });
 
             var message = string.Format("ListView_OnScrool {0}", uuid);
             MessagingCenter.Subscribe<object, ScroolToItem>(this, message, async (sender, args) =>

@@ -18,10 +18,7 @@ namespace MVVMCrud.Example.ViewModels.Post
         {
         }
 
-        public override string SetupEndpoint()
-        {
-            return Constants.Constants.METHOD_POST;
-        }
+        public override string SetupEndpoint() => Constants.Constants.METHOD_POST;
 
         public override async void AddNewItem(PostItem item)
         {
@@ -40,10 +37,10 @@ namespace MVVMCrud.Example.ViewModels.Post
             return ItemsList.Where(x => x.Item.Title.Contains(newText.ToLower())).ToList();
         }
 
-        public override string SetupDetailPageName()
-        {
-            return nameof(CommentPage);
-        }
+        #region Header
+        public override string SetupDetailPageName(PostCellViewModel obj) => nameof(CommentPage);
 
+        public override bool IsDetailPageWithHeader(PostCellViewModel obj) => true;
+        #endregion
     }
 }

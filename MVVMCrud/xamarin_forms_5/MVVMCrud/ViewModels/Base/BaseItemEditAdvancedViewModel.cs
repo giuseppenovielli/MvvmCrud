@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using MVVMCrud.Models.Base;
 using MVVMCrud.Services.Request;
+using MVVMCrud.Utils;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Prism.Navigation;
 using Xamarin.Forms;
 
@@ -17,6 +19,7 @@ namespace MVVMCrud.ViewModels.Base
         where TItemRoot : BaseModelItemRoot<TItem>, new()
     {
         public TItemInput ItemInput { get; set; }
+        public TItem Item { get; set; }
 
         public int Position { get; set; }
         public int Section { get; set; }
@@ -29,39 +32,10 @@ namespace MVVMCrud.ViewModels.Base
             Section = -1;
         }
 
-        public override async void Initialize(INavigationParameters parameters)
+  
+        public override void Initialize(INavigationParameters parameters)
         {
             base.Initialize(parameters);
-
-            if (parameters.ContainsKey("endpoint"))
-            {
-                Endpoint = parameters.GetValue<string>("endpoint");
-            }
-
-            if (parameters.ContainsKey("itemSerialized"))
-            {
-                var itemSerialized = parameters["itemSerialized"] as string;
-                Position = (int)parameters["position"];
-
-                if (!string.IsNullOrWhiteSpace(itemSerialized))
-                {
-                    TItem item = null;
-                    if (SetupIsDeserializeItem())
-                    {
-                        item = SetupDeserializeItem(itemSerialized);
-                    }
-
-                    ItemInput = SetupDeserializeItemInput(itemSerialized);
-
-                    await SetupGetItem(ItemInput, item);
-                    SetupManageItemInput(ItemInput, item);
-                }
-            }
-            else
-            {
-                Position = -1;
-                Section = -1;
-            }
 
             if (ItemInput == null)
             {
@@ -77,9 +51,47 @@ namespace MVVMCrud.ViewModels.Base
             SetupInterface();
         }
 
+        public override async void InitializeParameters(INavigationParameters parameters)
+        {
+            base.InitializeParameters(parameters);
+
+            if (parameters.ContainsKey("endpoint"))
+            {
+                Endpoint = parameters.GetValue<string>("endpoint");
+            }
+
+            if (parameters.ContainsKey("itemSerialized"))
+            {
+                var itemSerialized = parameters.GetValue<string>("itemSerialized");
+                if (parameters.ContainsKey("position"))
+                {
+                    Position = parameters.GetValue<int>("position");
+                }
+                
+
+                if (!string.IsNullOrWhiteSpace(itemSerialized))
+                {
+                    if (SetupIsDeserializeItem())
+                    {
+                        Item = SetupDeserializeItem(itemSerialized);
+                    }
+
+                    ItemInput = SetupDeserializeItemInput(itemSerialized);
+
+                    await SetupGetItem(ItemInput, Item);
+                    SetupManageItemInput(ItemInput, Item);
+                }
+            }
+            else
+            {
+                Position = -1;
+                Section = -1;
+            }
+        }
+
         public virtual JsonSerializerSettings SetupJsonDeserializerSettings()
         {
-            return MVVMCrudApplication.Instance.SetupJsonSettingsDeserialize();
+            return MVVMCrudApplication.Instance.SetupJsonSettingsDeserialize(true);
         }
 
         public virtual JsonSerializerSettings SetupJsonSerializerSettings()
@@ -103,7 +115,7 @@ namespace MVVMCrud.ViewModels.Base
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
             }
             return null;
-            
+
         }
 
 
@@ -134,36 +146,19 @@ namespace MVVMCrud.ViewModels.Base
         {
         }
 
+
         public virtual string SetupTitlePageNew()
         {
-            var pageVMName = GetType().Name;
-
-            var pageContext = pageVMName.Split(new[] { "NewEditPageViewModel" }, StringSplitOptions.None);
-            if (pageContext?.Length == 2)
-            {
-                var pageName = pageContext[0].ToLower();
-
-                var label = string.Format("title_page_{0}_new", pageName);
-                return MVVMCrudApplication.GetAppResourceManager().GetString(label);
-            }
-
-            return null;
+            var pageName = Utils.Utils.GetPageNameWithUnderscore(GetType().Name, "NewEditPageViewModel");
+            var label = string.Format("title_page_{0}_new", pageName);
+            return MVVMCrudApplication.GetAppResourceManager().GetString(label);
         }
 
         public virtual string SetupTitlePageEdit()
         {
-            var pageVMName = GetType().Name;
-
-            var pageContext = pageVMName.Split(new[] { "NewEditPageViewModel" }, StringSplitOptions.None);
-            if (pageContext?.Length == 2)
-            {
-                var pageName = pageContext[0].ToLower();
-
-                var label = string.Format("title_page_{0}_edit", pageName);
-                return MVVMCrudApplication.GetAppResourceManager().GetString(label);
-            }
-
-            return null;
+            var pageName = Utils.Utils.GetPageNameWithUnderscore(GetType().Name, "NewEditPageViewModel");
+            var label = string.Format("title_page_{0}_edit", pageName);
+            return MVVMCrudApplication.GetAppResourceManager().GetString(label);
         }
 
         public override string SetupTitlePage()
@@ -182,6 +177,25 @@ namespace MVVMCrud.ViewModels.Base
         public virtual void SetupInterface()
         {
             TitlePage = SetupTitlePage();
+
+            if (!string.IsNullOrWhiteSpace(ItemInput?.Id))
+            {
+                SetupInterfaceEditItem();
+            }
+            else
+            {
+                SetupInterfaceNewItem();
+            }
+        }
+
+        public virtual void SetupInterfaceEditItem()
+        {
+
+        }
+
+        public virtual void SetupInterfaceNewItem()
+        {
+
         }
 
         public virtual void SetupItemBeforeUpdate(TItemInput itemInput)
@@ -215,7 +229,7 @@ namespace MVVMCrud.ViewModels.Base
                 if (await DisplayUploadConfirm(SetupMessageUploadConfirm))
                 {
                     await UploadAndReturnItem();
-                    
+
                 }
 
             }
@@ -291,13 +305,7 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual JsonSerializerSettings GetJsonSettingsSerialize()
         {
-            var settings = new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-            };
-            settings.Converters = MVVMCrudApplication.Instance.GetJsonConverters();
-
-            return settings;
+            return MVVMCrudApplication.Instance.SetupJsonUploadSettingsSerialize();
         }
 
         public virtual MultipartFormDataContent GetFormDataToUpload(TItemInput item)

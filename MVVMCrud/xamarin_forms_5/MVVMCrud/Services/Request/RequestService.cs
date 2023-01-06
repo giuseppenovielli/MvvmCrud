@@ -123,7 +123,7 @@ namespace MVVMCrud.Services.Request
             {
                 if (httpStatusCodes == null)
                 {
-                    httpStatusCodes = new List<HttpStatusCode>() { HttpStatusCode.NoContent };
+                    httpStatusCodes = new List<HttpStatusCode>() { HttpStatusCode.NoContent, HttpStatusCode.OK };
                 }
                 setupItem?.Invoke();
 
@@ -164,14 +164,14 @@ namespace MVVMCrud.Services.Request
             string title = null,
             HttpClient httpClient = null,
             bool getIfError = false,
-            bool showLoading = false,
+            bool showLoading = true,
             List<HttpStatusCode> httpStatusCodes = null,
             Action setupItem = null)
         {
             var httpCodes = httpStatusCodes;
-            if (httpCodes == null)
+            if (httpStatusCodes == null)
             {
-                httpCodes = new List<HttpStatusCode>() { HttpStatusCode.NoContent, HttpStatusCode.OK };
+                httpCodes = new List<HttpStatusCode>() { HttpStatusCode.NoContent };
             }
 
             return await RequestDeleteItem(
@@ -179,7 +179,7 @@ namespace MVVMCrud.Services.Request
                 {
                     return await Delete(url, pk, httpClient);
                 },
-                title, getIfError, showLoading, httpCodes, setupItem);
+                title, getIfError, showLoading, httpStatusCodes, setupItem);
         }
 
 
@@ -219,7 +219,7 @@ namespace MVVMCrud.Services.Request
             string title = null,
             HttpClient httpClient = null,
             bool getIfError = false,
-            bool showLoading = false,
+            bool showLoading = true,
             List<HttpStatusCode> httpStatusCodes = null,
             Action setupItem = null)
 
@@ -252,7 +252,8 @@ namespace MVVMCrud.Services.Request
             bool getIfError = false,
             bool showLoading = false,
             List<HttpStatusCode> httpStatusCodes = null,
-            Action setupItem = null)
+            Action setupItem = null,
+            FormUrlEncodedContent contentquery = null)
 
             where TItemRoot : BaseModelItemRoot<TItem>, new()
             where TItem : BaseItem, new()
@@ -261,7 +262,7 @@ namespace MVVMCrud.Services.Request
             return await RequestItem<TItemRoot, TItem>(
                 async () =>
                 {
-                    return await Retrieve<TItemRoot, TItem>(url, pk, httpClient);
+                    return await Retrieve<TItemRoot, TItem>(url, pk, httpClient, contentquery);
                 }, title, getIfError, showLoading, httpStatusCodes, setupItem);
         }
 
@@ -303,7 +304,8 @@ namespace MVVMCrud.Services.Request
         public async Task<TItemRoot> Retrieve<TItemRoot, TItem>
             (string url,
             string pk = null,
-            HttpClient httpClient = null)
+            HttpClient httpClient = null,
+            FormUrlEncodedContent contentquery = null)
 
             where TItemRoot : BaseModelItemRoot<TItem>, new()
             where TItem : BaseItem, new()
@@ -317,7 +319,7 @@ namespace MVVMCrud.Services.Request
             }
 
 
-            var respondData = await _requestProvider.GetAsync(retrieveUrl, httpClient: httpClient);
+            var respondData = await _requestProvider.GetAsync(retrieveUrl, httpClient, contentquery);
 
             if (respondData != null)
             {

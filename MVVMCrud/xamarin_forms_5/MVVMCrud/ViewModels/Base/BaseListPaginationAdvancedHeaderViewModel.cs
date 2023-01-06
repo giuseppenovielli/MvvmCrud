@@ -1,13 +1,15 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using MVVMCrud.CustomView;
 using MVVMCrud.Models.Base;
 using MVVMCrud.Models.ItemRoot;
 using MVVMCrud.Services.Request;
 using MVVMCrud.Utils;
-using MVVMCrud.Views.Base;
+using MVVMCrud.Views;
 using Newtonsoft.Json;
 using Prism.Navigation;
+using MVVMCrud.Views.Base;
+using NavigationMode = Prism.Navigation.NavigationMode;
 using Xamarin.Forms;
 
 namespace MVVMCrud.ViewModels.Base
@@ -29,13 +31,14 @@ namespace MVVMCrud.ViewModels.Base
         where THeaderItem : BaseItem, new()
         where THeaderCellVM : BaseCellViewModel<THeaderItem>, new()
         where THeaderItemRoot : BaseModelItemRoot<THeaderItem>, new()
-        
+
     {
 
         public string HeaderEndpoint { get; set; }
         public string HeaderID { get; set; }
         public string HeaderPosition { get; set; }
-        public string FromPageViewModelName { get; set; }
+        public string FromPagelViewModelName { get; set; }
+        public THeaderItem HeaderItem { get; set; }
 
         public THeaderCellVM HeaderVM { get; set; }
         public BaseContentView HeaderView { get; set; }
@@ -50,9 +53,18 @@ namespace MVVMCrud.ViewModels.Base
 
         public override void Initialize(INavigationParameters parameters)
         {
-            if (parameters.ContainsKey("id"))
+            base.Initialize(parameters);
+
+            FromPagelViewModelName = SetupFromPageViewModelName();
+        }
+
+        public override void InitializeParameters(INavigationParameters parameters)
+        {
+            base.InitializeParameters(parameters);
+
+            if (parameters.ContainsKey("headerId"))
             {
-                HeaderID = parameters.GetValue<string>("id");
+                HeaderID = parameters.GetValue<string>("headerId");
             }
 
             if (parameters.ContainsKey("position"))
@@ -60,30 +72,37 @@ namespace MVVMCrud.ViewModels.Base
                 HeaderPosition = parameters.GetValue<string>("position");
             }
 
-            FromPageViewModelName = SetupFromPageViewModelName();
+            if (parameters.ContainsKey("fromPageViewModelName"))
+            {
+                FromPagelViewModelName = parameters.GetValue<string>("fromPageViewModelName");
+            }
 
-            base.Initialize(parameters);
+            if (parameters.ContainsKey("headerEndpoint"))
+            {
+                HeaderEndpoint = parameters.GetValue<string>("headerEndpoint");
+            }
         }
 
         public virtual string SetupHeaderEndpoint()
         {
-            return Endpoint;
+            return HeaderEndpoint;
         }
 
         public virtual string SetupFromPageViewModelName()
         {
-            return string.Empty;
-        }
-
-        public override string SetupTitlePage()
-        {
-            return string.Empty;
+            return FromPagelViewModelName;
         }
 
         public override async Task SetupGet()
         {
             HeaderEndpoint = SetupHeaderEndpoint();
             await GetHeader();
+        }
+
+
+        public override void ListViewRefresh()
+        {
+            _ = SetupGet();
         }
 
         public async Task GetHeader()
@@ -93,6 +112,7 @@ namespace MVVMCrud.ViewModels.Base
                     HeaderEndpoint,
                     HeaderID,
                     TitlePage,
+                    GetHttpClient(),
                     setupItem: SetupGetHeaderInitialize
                 );
 
@@ -106,6 +126,7 @@ namespace MVVMCrud.ViewModels.Base
             ShowMessage(GetLoadingText());
             HeaderView = null;
             HeaderVM = null;
+            HeaderItem = null;
         }
 
         public virtual BaseContentView SetupHeaderView()
@@ -119,11 +140,16 @@ namespace MVVMCrud.ViewModels.Base
             {
                 await GetItems(pagination: SetupIsPaginationEnable());
             }
-            
+
         }
 
         public virtual void SetupHeaderItemExtra(THeaderItemRoot obj)
         {
+            if (obj?.Item != null)
+            {
+                HeaderItem = obj.Item;
+            }
+
         }
 
         public override void SetupLoadingComplete()
@@ -138,13 +164,32 @@ namespace MVVMCrud.ViewModels.Base
 
         }
 
+        public override void SetupLoadingCompleteItems()
+        {
+            if (ItemsList?.Count > 0)
+            {
+                base.SetupLoadingCompleteItems();
+            }
+            else
+            {
+                if (HeaderView != null)
+                {
+                    HideMessage(false);
+                }
+                else
+                {
+                    ShowMessage(GetEmptyText(), true, true);
+                }
+            }
+        }
+
         void GetHeaderItemSetupList(THeaderItemRoot obj)
         {
             SetupHeaderItemExtra(obj);
 
             if (obj != null)
             {
-                HeaderVM = InstanceHeaderCellVM(obj.Item);                
+                HeaderVM = InstanceHeaderCellVM(obj.Item);
             }
         }
 
@@ -178,6 +223,7 @@ namespace MVVMCrud.ViewModels.Base
         {
             var navParams = new NavigationParameters
             {
+                { "position", HeaderPosition },
                 { "endpoint", HeaderEndpoint },
                 { "itemSerialized", SetupHeaderCreateUpdatePageItemSerialized(cellVM) },
             };
@@ -185,14 +231,15 @@ namespace MVVMCrud.ViewModels.Base
             var page = SetupHeaderCreateUpdatePage();
             if (!string.IsNullOrWhiteSpace(page))
             {
-                var navResult = await NavigationService.NavigateAsync(page, navParams, useModalNavigation: SetupCreateUpdatePageIsModal());
+                //var navResult = await NavigationService.NavigateAsync(page, navParams, useModalNavigation: SetupCreateUpdatePageIsModal());
+                var navResult = await NavigationService.NavigateAsync(page, navParams);
             }
 
         }
 
         public virtual string SetupHeaderCreateUpdatePageName()
         {
-            return FromPageViewModelName;
+            return FromPagelViewModelName;
         }
 
         public virtual string SetupHeaderCreateUpdatePage()
@@ -205,6 +252,8 @@ namespace MVVMCrud.ViewModels.Base
                 var pageName = pageContext[0];
 
                 var pageNewEdit = pageName + "NewEditPage";
+
+                return pageNewEdit;
 
                 if (!SetupCreateUpdatePageIsModal())
                 {
@@ -331,7 +380,7 @@ namespace MVVMCrud.ViewModels.Base
                 {
                     parameters.Add("newEditItem", HeaderEdited);
                 }
-                
+
             }
         }
     }

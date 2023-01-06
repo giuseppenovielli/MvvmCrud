@@ -29,47 +29,26 @@ namespace MVVMCrud.Example.ViewModels.Comment
 
 
         #region SetupHeader
-        public override string SetupHeaderEndpoint()
-        {
-            return Constants.Constants.METHOD_POST;
-        }
+        public override string SetupHeaderEndpoint() => Constants.Constants.METHOD_POST;
 
-        public override PostCellViewModel SetupHeaderInstanceCell(PostItem item)
-        {
-            return new PostCellViewModel(item, false);
-        }
+        public override PostCellViewModel SetupHeaderInstanceCell(PostItem item) => new PostCellViewModel(item, false);
 
-        public override BaseContentView SetupHeaderView()
-        {
-            return new PostCell();
-        }
+        public override BaseContentView SetupHeaderView() => new PostCell();
 
-        public override string SetupFromPageViewModelName()
+        public override async void UpdateEditHeaderItem(NewEditItem<PostItem> editHeaderItem)
         {
-            return nameof(PostPageViewModel);
+            SetupEditItemMessage();
+            await GetHeader();
         }
         #endregion
-
-        public override string SetupTitlePage()
-        {
-            return AppResources.title_page_post_comments;
-        }
 
         public override string SetupEndpoint()
         {
             return string.Format("{0}{1}/comments/", Constants.Constants.METHOD_POST, HeaderID);
         }
 
-        public override List<BaseCellViewModel<CommentItem>> PerformSearchSetup(string newText)
-        {
-            var newTextLower = newText.ToLower();
-            var l = ItemsList.Where(o => o.Item.Name.ToLower().Contains(newTextLower)).ToList();
-            return l;
-        }
+        public override List<BaseCellViewModel<CommentItem>> PerformSearchSetup(string newText) => ItemsList.Where(o => o.Item.Name.ToLower().Contains(newText.ToLower())).ToList();
 
-        public override bool SetupIsPaginationEnable()
-        {
-            return false;
-        }
+        public override bool SetupIsPaginationEnable() => false;
     }
 }

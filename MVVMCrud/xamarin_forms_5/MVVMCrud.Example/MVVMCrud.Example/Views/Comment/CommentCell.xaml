@@ -5,41 +5,41 @@
     x:Class="MVVMCrud.Example.Views.Comment.CommentCell"
     xmlns:mvvmcrudViews="clr-namespace:MVVMCrud.Views.Base;assembly=MVVMCrud">
 
-    <StackLayout>
+    <Grid
+        Margin="0"
+        Padding="0"
+        RowSpacing="0"
+        ColumnDefinitions="*"
+        RowDefinitions="Auto, Auto, Auto, Auto">
 
-        <StackLayout
-            Spacing="20"
-            Margin="10">
+        <Label
+            Margin="10, 10,10,0"
+            Grid.Row="0"
+            FontSize="Medium"
+            TextColor="Blue"
+            Text="{Binding Item.Name}"/>
 
-            <StackLayout
-                Spacing="0">
-
-                <Label
-                    FontSize="Medium"
-                    TextColor="Black"
-                    Text="{Binding Item.Name}"/>
-
-                <Label
-                    FontSize="Small"
-                    TextColor="Black"
-                    Text="{Binding Item.Email}"/>
-
-            </StackLayout>
-
-
-            <Label
-                FontSize="Medium"
-                TextColor="Black"
-                Text="{Binding Item.Body}"/>
+        <Label
+            Margin="10, 0,10,0"
+            Grid.Row="1"
+            FontSize="Micro"
+            TextColor="Green"
+            Text="{Binding Item.Email}"/>
 
 
-        </StackLayout>
+        <Label
+            Margin="10, 15,10,10"
+            Grid.Row="2"
+            FontSize="Small"
+            TextColor="Black"
+            Text="{Binding Item.Body}"/>
         
 
         <BoxView
+            Grid.Row="3"
             Color="LightGray"
             HeightRequest="2"/>
 
-    </StackLayout>
+    </Grid>
 
 </mvvmcrudViews:BaseContentView>

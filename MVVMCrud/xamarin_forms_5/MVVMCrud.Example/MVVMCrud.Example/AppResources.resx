@@ -23,7 +23,7 @@
         <value>Edit Post</value>
     </data>
 
-	<data name="title_page_post_comments" xml:space="preserve">
+	<data name="title_page_comment" xml:space="preserve">
         <value>Comments</value>
     </data>
 </root>

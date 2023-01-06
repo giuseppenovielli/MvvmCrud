@@ -16,7 +16,7 @@
         <controls:MVVMCrudSearchBar
             Grid.Row="0"/>
 
-        <controls:MVVMCrudRefreshView
+        <!--<controls:MVVMCrudRefreshView
             Grid.Row="1">
 
             <controls:MVVMCrudCollectionView
@@ -31,7 +31,28 @@
 
             </controls:MVVMCrudCollectionView>
 
-        </controls:MVVMCrudRefreshView>
+        </controls:MVVMCrudRefreshView>-->
+
+        <controls:MVVMCrudListView
+            Grid.Row="1"
+            Header="{Binding HeaderView}">
+            <x:Arguments>
+                <ListViewCachingStrategy>RecycleElement</ListViewCachingStrategy>
+            </x:Arguments>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <viewsComment:CommentCell/>
+                </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+        </controls:MVVMCrudListView>
+
+        <views:EmptyView
+            Grid.Row="1"
+            BindingContext="{Binding EmptyVM}"/>
 
     </Grid>
 

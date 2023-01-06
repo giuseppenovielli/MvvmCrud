@@ -108,9 +108,9 @@ namespace MVVMCrud
             return l;
 
         }
-        public virtual void SetupPaginationItem(string item, HttpResponseHeaders responseHeader, PaginationItem paginationItem) { }
+        public virtual void SetupPaginationItem(string item, HttpResponseHeaders responseHeader, PaginationItem paginationItem){}
 
-        public virtual void SetupRootItemBase(RootItemBase rootItemBase) { }
+        public virtual void SetupRootItemBase(RootItemBase rootItemBase){}
 
         public virtual void SetupPaginationRequest(RootItemBase rootItemBase) { }
 
@@ -137,7 +137,7 @@ namespace MVVMCrud
         }
 
 
-        public virtual JsonSerializerSettings SetupJsonSettingsDeserialize(bool ignoreJsonProperty = false)
+        public virtual JsonSerializerSettings SetupJsonSettingsDeserialize(bool ignoreJsonProperty=false)
         {
             var settings = new JsonSerializerSettings
             {
@@ -145,13 +145,6 @@ namespace MVVMCrud
                 ContractResolver = new IgnoreJsonPropertyContractResolver()
             };
 
-<<<<<<<< HEAD:MVVMCrud/maui_net7/MVVMCrud/MVVMCrudApplication.cs
-            settings.Converters = GetJsonConverters();
-
-            return settings;
-        }
-
-========
             if (ignoreJsonProperty)
             {
                 settings.ContractResolver = new IgnoreJsonPropertyContractResolver();
@@ -162,22 +155,15 @@ namespace MVVMCrud
             return settings;
         }
 
->>>>>>>> xamarin_forms:MVVMCrud/xamarin_forms_5/MVVMCrud/MVVMCrudApplication.cs
         public virtual JsonSerializerSettings SetupJsonUploadSettingsSerialize()
         {
             var settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
             };
-<<<<<<<< HEAD:MVVMCrud/maui_net7/MVVMCrud/MVVMCrudApplication.cs
            
             return settings;
         }
-========
-
-            return settings;
-        }
->>>>>>>> xamarin_forms:MVVMCrud/xamarin_forms_5/MVVMCrud/MVVMCrudApplication.cs
 
         public static void RegisterServices(IContainerRegistry containerRegistry)
         {

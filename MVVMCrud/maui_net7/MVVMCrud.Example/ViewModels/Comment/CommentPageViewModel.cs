@@ -30,19 +30,10 @@ namespace MVVMCrud.Example.ViewModels.Comment
 
 
         #region SetupHeader
-<<<<<<<< HEAD:MVVMCrud/maui_net7/MVVMCrud.Example/ViewModels/Comment/CommentPageViewModel.cs
         public override PostCellViewModel SetupHeaderInstanceCell(PostItem item) => new PostCellViewModel(item, false);
 
         public override BaseContentView SetupHeaderView() => new PostCell();
 
-========
-        public override string SetupHeaderEndpoint() => Constants.Constants.METHOD_POST;
-
-        public override PostCellViewModel SetupHeaderInstanceCell(PostItem item) => new PostCellViewModel(item, false);
-
-        public override BaseContentView SetupHeaderView() => new PostCell();
-
->>>>>>>> xamarin_forms:MVVMCrud/xamarin_forms_5/MVVMCrud.Example/MVVMCrud.Example/ViewModels/Comment/CommentPageViewModel.cs
         public override async void UpdateEditHeaderItem(NewEditItem<PostItem> editHeaderItem)
         {
             SetupEditItemMessage();
@@ -50,20 +41,10 @@ namespace MVVMCrud.Example.ViewModels.Comment
         }
         #endregion
 
-<<<<<<<< HEAD:MVVMCrud/maui_net7/MVVMCrud.Example/ViewModels/Comment/CommentPageViewModel.cs
         public override string SetupEndpoint() => string.Format("{0}{1}/comments/", Constants.Constants.METHOD_POST, HeaderID);
 
         public override List<BaseCellViewModel<CommentItem>> PerformSearchSetup(string newText) => ItemsList.Where(o => o.Item.Name.ToLower().Contains(newText.ToLower())).ToList();
 
-========
-        public override string SetupEndpoint()
-        {
-            return string.Format("{0}{1}/comments/", Constants.Constants.METHOD_POST, HeaderID);
-        }
-
-        public override List<BaseCellViewModel<CommentItem>> PerformSearchSetup(string newText) => ItemsList.Where(o => o.Item.Name.ToLower().Contains(newText.ToLower())).ToList();
-
->>>>>>>> xamarin_forms:MVVMCrud/xamarin_forms_5/MVVMCrud.Example/MVVMCrud.Example/ViewModels/Comment/CommentPageViewModel.cs
         public override bool SetupIsPaginationEnable() => false;
     }
 }

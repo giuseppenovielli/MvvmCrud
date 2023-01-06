@@ -35,7 +35,7 @@ namespace MVVMCrud.Views.Base
 
             System.Diagnostics.Debug.WriteLine("disappearing");
 
-
+            
         }
     }
 }

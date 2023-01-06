@@ -10,10 +10,6 @@ using Newtonsoft.Json;
 using Prism.Navigation;
 using MVVMCrud.Views.Base;
 using NavigationMode = Prism.Navigation.NavigationMode;
-<<<<<<<< HEAD:MVVMCrud/maui_net7/MVVMCrud/ViewModels/Base/BaseListPaginationAdvancedHeaderViewModel.cs
-========
-using Xamarin.Forms;
->>>>>>>> xamarin_forms:MVVMCrud/xamarin_forms_5/MVVMCrud/ViewModels/Base/BaseListPaginationAdvancedHeaderViewModel.cs
 
 namespace MVVMCrud.ViewModels.Base
 {

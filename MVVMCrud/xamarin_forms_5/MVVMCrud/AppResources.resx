@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+
+	<data name="action_refresh" xml:space="preserve">
+        <value>Reload</value>
+    </data>
+	<data name="list_loading_more" xml:space="preserve">
+        <value>Show More</value>
+    </data>
+
+	<data name="msg_confirm_upload" xml:space="preserve">
+        <value>Do you confirm that you want to upload this data?</value>
+    </data>
+    <data name="msg_confirm_delete" xml:space="preserve">
+        <value>Do you confirm that you want to cancel?</value>
+    </data>
+
+	<data name="msg_empty_list" xml:space="preserve">
+        <value>No data</value>
+    </data>
+	<data name="msg_loading" xml:space="preserve">
+        <value>Wait...</value>
+    </data>
+    <data name="error_data_loading" xml:space="preserve">
+        <value>Internal Error!</value>
+    </data>
+	<data name="ok" xml:space="preserve">
+        <value>OK</value>
+    </data>
+	<data name="cancel" xml:space="preserve">
+        <value>Cancel</value>
+    </data>
+	<data name="placeholder_search" xml:space="preserve">
+        <value>Search</value>
+    </data>
+    <data name="msg_search_not_result_found" xml:space="preserve">
+        <value>No result</value>
+    </data>
+    <data name="error_internet_connection" xml:space="preserve">
+        <value>No connection</value>
+    </data>
+    <data name="error_generic" xml:space="preserve">
+        <value>Sorry, there was a problem! Check for a connection and try again later!</value>
+    </data>
+
+    <data name="action_yes" xml:space="preserve">
+        <value>Yes</value>
+    </data>
+    <data name="action_no" xml:space="preserve">
+        <value>No</value>
+    </data>
+
+    <data name="item_added_successfully" xml:space="preserve">
+        <value>Uploaded.</value>
+    </data>
+    <data name="item_update_successfully" xml:space="preserve">
+        <value>Edited.</value>
+    </data>
+    <data name="item_deleted_successfully" xml:space="preserve">
+        <value>Deleted.</value>
+    </data>
+
+    <data name="action_add" xml:space="preserve">
+        <value>Add</value>
+    </data>
+    <data name="action_options" xml:space="preserve">
+        <value>Edit</value>
+    </data>
+    <data name="action_send" xml:space="preserve">
+        <value>Send</value>
+    </data>
+</root>

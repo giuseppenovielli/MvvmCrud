@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<mvvmcrudViews:BaseContentPage
+    xmlns:mvvmcrudViews="clr-namespace:MVVMCrud.Views.Base;assembly=MVVMCrud"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="MVVMCrud.Example.Views.Main.MainPage"
+    xmlns:viewmodelsMain="clr-namespace:MVVMCrud.Example.ViewModels.Main"
+    x:DataType="viewmodelsMain:MainPageViewModel">
+
+    <StackLayout
+        Spacing="10"
+        HorizontalOptions="Center"
+        Margin="10,20,0,10">
+
+        <Button
+            Text="Post Page CollectionView"
+            Command="{Binding PostPageCollectionViewCommand}"/>
+
+
+        <Button
+            Text="Post Page ListView"
+            Command="{Binding PostPageListViewCommand}"/>
+
+
+        <Button
+            Text="Post Page CollectionView ScroolToItem"
+            Command="{Binding PostPageCollectionViewScroolToItemCommand}"/>
+
+
+        <Button
+            Text="Post Page ListView ScroolToItem"
+            Command="{Binding PostPageListViewScroolToItemCommand}"/>
+
+
+    </StackLayout>
+    
+
+</mvvmcrudViews:BaseContentPage>

@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<mvvmcrudViews:BaseContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="MVVMCrud.Example.Views.Comment.CommentPage"
+    xmlns:views="clr-namespace:MVVMCrud.Views;assembly=MVVMCrud"
+    xmlns:viewsComment="clr-namespace:MVVMCrud.Example.Views.Comment"
+    xmlns:viewmodelsComment="clr-namespace:MVVMCrud.Example.ViewModels.Comment"
+    xmlns:controls="clr-namespace:MVVMCrud.Controls;assembly=MVVMCrud"
+    xmlns:mvvmcrudViews="clr-namespace:MVVMCrud.Views.Base;assembly=MVVMCrud"
+    x:DataType="viewmodelsComment:CommentPageViewModel">
+
+    <Grid
+        RowDefinitions="Auto, *">
+
+        <controls:MVVMCrudSearchBar
+            Grid.Row="0"/>
+
+        <!--<controls:MVVMCrudRefreshView
+            Grid.Row="1">
+
+            <controls:MVVMCrudCollectionView
+                Header="{Binding HeaderView}"
+                ItemsSource="{Binding ItemsSource}">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <viewsComment:CommentCell/>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </controls:MVVMCrudCollectionView>
+
+        </controls:MVVMCrudRefreshView>-->
+
+        <controls:MVVMCrudListView
+            Grid.Row="1"
+            Header="{Binding HeaderView}">
+            <x:Arguments>
+                <ListViewCachingStrategy>RecycleElement</ListViewCachingStrategy>
+            </x:Arguments>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <viewsComment:CommentCell/>
+                </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+        </controls:MVVMCrudListView>
+
+        <views:EmptyView
+            Grid.Row="1"
+            BindingContext="{Binding EmptyVM}"/>
+
+    </Grid>
+
+</mvvmcrudViews:BaseContentPage>

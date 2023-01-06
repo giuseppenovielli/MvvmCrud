@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<mvvmcrudViews:BaseContentView
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="MVVMCrud.Example.Views.Comment.CommentCell"
+    xmlns:mvvmcrudViews="clr-namespace:MVVMCrud.Views.Base;assembly=MVVMCrud">
+
+    <Grid
+        Margin="0"
+        Padding="0"
+        RowSpacing="0"
+        ColumnDefinitions="*"
+        RowDefinitions="Auto, Auto, Auto, Auto">
+
+        <Label
+            Margin="10, 10,10,0"
+            Grid.Row="0"
+            FontSize="Medium"
+            TextColor="Blue"
+            Text="{Binding Item.Name}"/>
+
+        <Label
+            Margin="10, 0,10,0"
+            Grid.Row="1"
+            FontSize="Micro"
+            TextColor="Green"
+            Text="{Binding Item.Email}"/>
+
+
+        <Label
+            Margin="10, 15,10,10"
+            Grid.Row="2"
+            FontSize="Small"
+            TextColor="Black"
+            Text="{Binding Item.Body}"/>
+        
+
+        <BoxView
+            Grid.Row="3"
+            Color="LightGray"
+            HeightRequest="2"/>
+
+    </Grid>
+
+</mvvmcrudViews:BaseContentView>

@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+
+	<data name="action_refresh" xml:space="preserve">
+        <value>Ricarica</value>
+    </data>
+	<data name="list_loading_more" xml:space="preserve">
+        <value>Mostra Altro</value>
+    </data>
+
+	<data name="msg_confirm_upload" xml:space="preserve">
+        <value>Confermi di voler caricare questi dati?</value>
+    </data>
+    <data name="msg_confirm_delete" xml:space="preserve">
+        <value>Confermi di voler cancellare?</value>
+    </data>
+
+	<data name="msg_empty_list" xml:space="preserve">
+        <value>Nessun dato</value>
+    </data>
+	<data name="msg_loading" xml:space="preserve">
+        <value>Attendi...</value>
+    </data>
+    <data name="error_data_loading" xml:space="preserve">
+        <value>Errore Interno</value>
+    </data>
+	<data name="ok" xml:space="preserve">
+        <value>OK</value>
+    </data>
+	<data name="cancel" xml:space="preserve">
+        <value>Annulla</value>
+    </data>
+	<data name="cancel" xml:space="preserve">
+        <value>Annulla</value>
+    </data>
+	<data name="placeholder_search" xml:space="preserve">
+        <value>Cerca</value>
+    </data>
+    <data name="msg_search_not_result_found" xml:space="preserve">
+        <value>Nessun Risultato</value>
+    </data>
+    <data name="error_internet_connection" xml:space="preserve">
+        <value>Nessuna connessione</value>
+    </data>
+    <data name="error_generic" xml:space="preserve">
+        <value>Mi dispiace, si è verificato un problema! Controlla la presenza di connessione e riprova in seguito!</value>
+    </data>
+
+    <data name="action_yes" xml:space="preserve">
+        <value>Si</value>
+    </data>
+    <data name="action_no" xml:space="preserve">
+        <value>No</value>
+    </data>
+
+    <data name="item_added_successfully" xml:space="preserve">
+        <value>Caricato.</value>
+    </data>
+    <data name="item_update_successfully" xml:space="preserve">
+        <value>Modificato.</value>
+    </data>
+    <data name="item_deleted_successfully" xml:space="preserve">
+        <value>Cancellato.</value>
+    </data>
+
+    <data name="action_add" xml:space="preserve">
+        <value>Aggiungi</value>
+    </data>
+    <data name="action_options" xml:space="preserve">
+        <value>Modifica</value>
+    </data>
+    <data name="action_send" xml:space="preserve">
+        <value>Invia</value>
+    </data>
+</root>

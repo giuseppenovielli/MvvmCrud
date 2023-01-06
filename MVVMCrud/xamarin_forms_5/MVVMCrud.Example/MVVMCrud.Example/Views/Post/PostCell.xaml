@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<mvvmcrudViews:BaseContentView
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="MVVMCrud.Example.Views.Post.PostCell"
+    xmlns:mvvmcrudViews="clr-namespace:MVVMCrud.Views.Base;assembly=MVVMCrud"
+    xmlns:viewmodelsPost="clr-namespace:MVVMCrud.Example.ViewModels.Post"
+    x:DataType="viewmodelsPost:PostCellViewModel">
+
+    <StackLayout>
+
+        <Grid
+            RowSpacing="20"
+            ColumnSpacing="10"
+            RowDefinitions="Auto, Auto, Auto"
+            ColumnDefinitions="*, Auto, Auto"
+            Margin="10, 15,20,10">
+
+             <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                FontSize="Medium"
+                VerticalOptions="Center"
+                TextColor="Black"
+                Text="{Binding Item.Title}"/>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="1"
+                Padding="5"
+                VerticalOptions="Center"
+                Text="Edit">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer
+                        Command="{Binding EditClickCommand}"
+                        CommandParameter="{Binding .}"
+                        NumberOfTapsRequired="1">
+                    </TapGestureRecognizer>
+                </Label.GestureRecognizers>
+            </Label>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="2"
+                Padding="5"
+                VerticalOptions="Center"
+                Text="Delete">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer
+                        Command="{Binding DeleteClickCommand}"
+                        CommandParameter="{Binding .}"
+                        NumberOfTapsRequired="1">
+                    </TapGestureRecognizer>
+                </Label.GestureRecognizers>
+            </Label>
+
+            <Label
+                Grid.Row="1"
+                Grid.ColumnSpan="3"
+                FontSize="Small"
+                TextColor="Black"
+                Text="{Binding Item.Body}"/>
+
+            <Button
+                Grid.Row="2"
+                Grid.ColumnSpan="3"
+                IsVisible="{Binding ShowCommentIsVisible}"
+                HorizontalOptions="End"
+                Text="Show Comments"
+                CommandParameter="{Binding .}"
+                Command="{Binding DetailPageClickCommand}"/>
+
+
+        </Grid>
+        
+
+        <BoxView
+            Color="LightGray"
+            HeightRequest="5"/>
+
+    </StackLayout>
+
+</mvvmcrudViews:BaseContentView>

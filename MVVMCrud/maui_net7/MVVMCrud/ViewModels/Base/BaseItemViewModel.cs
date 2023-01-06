@@ -2,10 +2,9 @@
 using MVVMCrud.Services.Request;
 using Prism.Navigation;
 
-
 namespace MVVMCrud.ViewModels.Base
 {
-    public class BaseItemViewModel : BaseViewModel
+    public class BaseItemViewModel : BasePageViewModel
     {
         public EmptyViewModel EmptyVM { get; }
 
@@ -14,12 +13,10 @@ namespace MVVMCrud.ViewModels.Base
         public bool IsRefreshing { get; set; }
         public ICommand RefreshCommand { get; private set; }
 
-        public BaseItemViewModel(
-            INavigationService navigationService,
-            IRequestService requestService = null) : base(navigationService, requestService)
+        public BaseItemViewModel(INavigationService navigationService) : base(navigationService)
         {
 
-            EmptyVM = new EmptyViewModel(NavigationService);
+            EmptyVM = new EmptyViewModel();
             EmptyVM.OnRefresh += delegate
             {
                 PageRefresh();

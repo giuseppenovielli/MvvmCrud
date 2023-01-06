@@ -54,6 +54,7 @@ public static class MauiProgram
 
     }
 
+
     private static void HandleNavigationError(Exception ex)
     {
         System.Diagnostics.Debug.WriteLine(ex);

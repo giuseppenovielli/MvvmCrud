@@ -5,7 +5,6 @@ using MVVMCrud.Views;
 using Prism.Commands;
 using Prism.Navigation;
 
-
 namespace MVVMCrud.ViewModels.Base
 {
     public class BaseListPaginationViewModel : BaseListViewModel
@@ -21,10 +20,10 @@ namespace MVVMCrud.ViewModels.Base
 
         public BaseListPaginationViewModel(
             INavigationService navigationService,
-            IRequestService requestService = null) : base(navigationService, requestService)
+            IRequestService requestService) : base(navigationService, requestService)
         {
 
-            LoadingMoreVM = new LoadingMoreViewModel(NavigationService)
+            LoadingMoreVM = new LoadingMoreViewModel()
             {
                 LoadingMoreClickCommand = new Command((obj) =>
                 {

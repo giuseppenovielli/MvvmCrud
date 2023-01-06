@@ -2,23 +2,19 @@
 using MVVMCrud.Services.Request;
 using Prism.Navigation;
 
-
 namespace MVVMCrud.ViewModels.Base
 {
-    public class BaseItemEditViewModel : BaseViewModel
+    public class BaseItemEditViewModel : BasePageViewModel
     {
         public EmptyViewModel EmptyVM { get; }
 
         public bool ItemIsVisible { get; set; }
 
-        public ICommand TlbAddCommandClick { get; private set; }
-        public ICommand TlbSendCommandClick { get; private set; }
-
         public BaseItemEditViewModel(
             INavigationService navigationService,
             IRequestService requestService = null) : base(navigationService, requestService)
         {
-            EmptyVM = new EmptyViewModel(NavigationService);
+            EmptyVM = new EmptyViewModel();
             EmptyVM.OnRefresh += delegate
             {
                 PageRefresh();

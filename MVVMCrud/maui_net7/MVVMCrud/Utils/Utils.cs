@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
 namespace MVVMCrud.Utils
 {
-    public static class Utils
+    public static partial class Utils
     {
         public static bool IsConnected()
         {
@@ -49,5 +50,60 @@ namespace MVVMCrud.Utils
 
             return formData;
         }
+
+        public static FormUrlEncodedContent GetFormUrlEncodedContent(object item, JsonSerializerSettings settings)
+        {
+            var content = JsonConvert.SerializeObject(item, settings);
+
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(content);
+
+            var values = new List<KeyValuePair<string, string>>();
+
+            foreach (var keyValue in dict)
+            {
+                var key = keyValue.Key;
+                var value = keyValue.Value.ToString();
+
+                if (value != null)
+                {
+                    values.Add(new KeyValuePair<string, string>(key, value));
+                }
+            }
+
+            return new FormUrlEncodedContent(values);
+        }
+
+        public static string[] SplitOnUppercase(string item)
+        {
+            //https://www.codegrepper.com/code-examples/csharp/c%23+split+string+by+caps
+            return MyRegex().Split(item);
+        }
+
+        public static string GetPageNameWithUnderscore(string className, string contextName)
+        {
+            var pageWithUnderscore = string.Empty;
+
+            var pageContext = className.Split(new[] { contextName }, StringSplitOptions.None);
+            if (pageContext?.Length == 2)
+            {
+                var pageName = pageContext[0];
+                var list = SplitOnUppercase(pageName);
+
+                var listLenght = list.Length;
+                for (int i = 0; i < list.Length; i++)
+                {
+                    pageWithUnderscore += list[i];
+                    if (i < listLenght - 1)
+                    {
+                        pageWithUnderscore += "_";
+                    }
+                }
+            }
+
+            return pageWithUnderscore.ToLower();
+        }
+
+        [GeneratedRegex("(?<!^)(?=[A-Z])")]
+        private static partial Regex MyRegex();
     }
 }

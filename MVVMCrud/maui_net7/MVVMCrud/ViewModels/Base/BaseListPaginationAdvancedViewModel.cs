@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,10 +9,8 @@ using MVVMCrud.Models.Base;
 using MVVMCrud.Models.ItemRoot;
 using MVVMCrud.Services.Request;
 using MVVMCrud.Utils;
-using MVVMCrud.Views.Base;
 using Newtonsoft.Json;
 using Prism.Navigation;
-
 
 namespace MVVMCrud.ViewModels.Base
 {
@@ -25,16 +23,16 @@ namespace MVVMCrud.ViewModels.Base
         public ObservableCollection<TCellVM> ItemsListSearch { get; set; }
         public ObservableCollection<TCellVM> ItemsSource { get; set; }
 
-        readonly string _uuidMessagingCenter;
-
         public string Id { get; private set; }
         public bool ScrolledToId { get; set; }
 
+        readonly string _uuidMessagingCenter;
         bool _isLoadingData;
 
         public BaseListPaginationAdvancedViewModel(
             INavigationService navigationService,
-            IRequestService requestService) : base(navigationService, requestService)
+            IRequestService requestService,
+            bool buttonRefreshIsVisible = false) : base(navigationService, requestService)
         {
             _uuidMessagingCenter = MVVMCrudApplication.GetLastPageUUID();
         }
@@ -43,10 +41,10 @@ namespace MVVMCrud.ViewModels.Base
         {
             base.Initialize(parameters);
 
-            if (parameters.ContainsKey("id")){ Id = parameters.GetValue<string>("id"); }
-
             TitlePage = SetupTitlePage();
             Endpoint = SetupEndpoint();
+
+            ShowMessage(MVVMCrudApplication.GetLoadingText());
 
             if (string.IsNullOrWhiteSpace(Id))
             {
@@ -59,31 +57,31 @@ namespace MVVMCrud.ViewModels.Base
 
         }
 
+        public override void InitializeParameters(INavigationParameters parameters)
+        {
+            base.InitializeParameters(parameters);
 
-        public override void OnAppearing()
+            if (parameters.ContainsKey("id")) { Id = parameters.GetValue<string>("id"); }
+        }
+
+        public override async void OnAppearing()
         {
             base.OnAppearing();
 
-            if (!string.IsNullOrWhiteSpace(Id))
+            if (!string.IsNullOrWhiteSpace(Id)
+                &&
+                Start)
             {
-                _ = SetupGet();
+                await SetupGet();
+                Start = false;
             }
         }
 
         public override string SetupTitlePage()
         {
-            var pageVMName = GetType().Name;
-
-            var pageContext = pageVMName.Split(new[] { "PageViewModel" }, StringSplitOptions.None);
-            if (pageContext?.Length == 2)
-            {
-                var pageName = pageContext[0].ToLower();
-
-                var label = string.Format("title_page_{0}", pageName);
-                return MVVMCrudApplication.GetAppResourceManager().GetString(label);
-            }
-
-            return null;
+            var pageName = Utils.Utils.GetPageNameWithUnderscore(GetType().Name, "PageViewModel");
+            var label = string.Format("title_page_{0}", pageName);
+            return AppResources.ResourceManager.GetString(label)
         }
 
         public virtual FormUrlEncodedContent SetupContentQuery()
@@ -118,12 +116,17 @@ namespace MVVMCrud.ViewModels.Base
                     );
         }
 
+        public virtual bool GetItemsWithExtra()
+        {
+            return false;
+        }
+
 
         public virtual async Task<TItemsRoot> SetupGetItemsRequest(string urlPagination = null, bool pagination = true)
         {
             if (!string.IsNullOrWhiteSpace(Endpoint))
             {
-                return await RequestService.List<TItemsRoot, TItem>(Endpoint, SetupContentQuery(), urlPagination, pagination, httpClient: GetHttpClient());
+                return await RequestService.List<TItemsRoot, TItem>(Endpoint, SetupContentQuery(), urlPagination, pagination, GetItemsWithExtra(), GetHttpClient());
             }
 
             return await Task.FromResult<TItemsRoot>(null);
@@ -174,7 +177,9 @@ namespace MVVMCrud.ViewModels.Base
                     {
                         SetupGetItemsPagination(urlPagination);
                     },
-                urlPagination, pagination: pagination);
+                urlPagination,
+                SetupGetResponseItemIfError(),
+                pagination);
 
 
             if (rootItemBase != null)
@@ -186,16 +191,21 @@ namespace MVVMCrud.ViewModels.Base
             SetupLoadingComplete();
         }
 
+        public virtual bool SetupGetResponseItemIfError()
+        {
+            return false;
+        }
 
         public virtual void SetupLoadingComplete()
         {
+            _isLoadingData = false;
+
             ProcessPagination();
 
             SetupLoadingCompleteItems();
 
             EndLoadingMore();
 
-            _isLoadingData = false;
         }
 
         public override void LoadingMore()
@@ -281,7 +291,7 @@ namespace MVVMCrud.ViewModels.Base
 
                     });
 
-			        cellVM.SelectClickCommand = new Command<TCellVM>((obj) =>
+                    cellVM.SelectClickCommand = new Command<TCellVM>((obj) =>
                     {
                         SetupSelectedItem(obj);
                     });
@@ -306,8 +316,8 @@ namespace MVVMCrud.ViewModels.Base
                 { "selectedItem", obj?.Item}
             };
 
-            //var navResult = await NavigationService.GoBackAsync(navParams, useModalNavigation: true);
             var navResult = await NavigationService.GoBackAsync(navParams);
+
         }
 
         public virtual string GetConfirmDeleteText()
@@ -394,7 +404,7 @@ namespace MVVMCrud.ViewModels.Base
                 }
                 else
                 {
-                    return string.Format("{0}/{1}", nameof(MVVMCrudModalNavigationPage), pageNewEdit);
+                    return string.Format("{0}/{1}", nameof(CustomNavigationPage), pageNewEdit);
                 }
 
 
@@ -405,7 +415,7 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual bool SetupCreateUpdatePageIsModal()
         {
-            if (Device.RuntimePlatform == Device.iOS)
+            if (DeviceInfo.Platform == DevicePlatform.iOS)
             {
                 return true;
             }
@@ -496,21 +506,77 @@ namespace MVVMCrud.ViewModels.Base
             }
         }
 
-        public virtual string SetupDetailPageName()
+        public virtual string SetupDetailPageName(TCellVM obj)
         {
             return string.Empty;
         }
 
+        public virtual bool IsDetailPageWithHeader(TCellVM obj)
+        {
+            return false;
+        }
+
+        public virtual string SetupDetailPageID(TCellVM obj)
+        {
+            return obj.Item.Id;
+        }
+
+        public virtual bool IsDetailPageModal(TCellVM obj)
+        {
+            return false;
+        }
+
         public virtual async void SetupDetailPage(TCellVM obj)
         {
-            var pageName = SetupDetailPageName();
+            var pageName = SetupDetailPageName(obj);
+            var withHeader = IsDetailPageWithHeader(obj);
+            var id = SetupDetailPageID(obj);
+            var modal = IsDetailPageModal(obj);
 
-            var navParams = new NavigationParameters
+            var position = ItemsSource.IndexOf(obj);
+            var fromPageName = GetType().Name;
+
+            if (!modal)
             {
-                { "id", obj.Item.Id },
-                { "position", ItemsSource.IndexOf(obj) }
-            };
-            var navResult = await NavigationService.NavigateAsync(pageName, navParams);
+                var navParams = new NavigationParameters
+                {
+                    { "position", position },
+                    { "fromPageViewModelName", fromPageName},
+                };
+
+                if (withHeader)
+                {
+                    navParams.Add("headerId", id);
+                    navParams.Add("headerEndpoint", Endpoint);
+                }
+                else
+                {
+                    navParams.Add("id", id);
+                }
+
+                var navResult = await NavigationService.NavigateAsync(pageName, navParams);
+            }
+            else
+            {
+                var navParams = new Dictionary<string, object>
+                {
+                    { "position", position },
+                    { "fromPageViewModelName", fromPageName },
+                };
+
+                if (withHeader)
+                {
+                    navParams.Add("headerId", id);
+                    navParams.Add("headerEndpoint", Endpoint);
+                }
+                else
+                {
+                    navParams.Add("id", id);
+                }
+
+                var navResult = await PageService?.PushModalPage(pageName, navParams);
+            }
+            
         }
 
         public override void PerformSearch(string newText)
@@ -543,7 +609,7 @@ namespace MVVMCrud.ViewModels.Base
                             }
 
                         });
-                        
+
                     });
 
                 }
@@ -555,8 +621,8 @@ namespace MVVMCrud.ViewModels.Base
                 }
             }
             else
-            { 
-                
+            {
+
                 if (!_isLoadingData)
                 {
                     ShowMessage(GetEmptyText(), true, true);
@@ -592,7 +658,6 @@ namespace MVVMCrud.ViewModels.Base
         public virtual void SubscribeSearchBarFocused()
         {
             var message = string.Format("SearchBar_Focused {0}", _uuidMessagingCenter);
-
             MessagingCenter.Subscribe<object, bool>(this, message, (sender, isFocused) =>
             {
                 SearchBarFocused(isFocused);
@@ -725,13 +790,11 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual void AddNewEditItemScrool(int newItemPos)
         {
-
             var cellVM = ItemsList?.ElementAtOrDefault(newItemPos);
             if (cellVM != null)
             {
                 ScroolTo(cellVM);
             }
-
         }
 
         public virtual void ScroolTo(object listObj)
@@ -757,13 +820,14 @@ namespace MVVMCrud.ViewModels.Base
 
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                await Task.Delay(500);
+                await Task.Delay(200);
 
                 await contentView.ScaleTo(1.08, 2000, Easing.BounceIn);
                 await contentView.ScaleTo(1, 250, Easing.BounceOut);
             });
 
         }
+
 
         public virtual void UpdateEditItem(NewEditItem<TItem> newEditItem)
         {
@@ -793,7 +857,7 @@ namespace MVVMCrud.ViewModels.Base
         {
             if (SetupDefaultEditItemMessage())
             {
-                Utils.Utils.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetEditItemUploadText());
+                DisplayService.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetEditItemUploadText());
             }
         }
 
@@ -806,7 +870,7 @@ namespace MVVMCrud.ViewModels.Base
         {
             if (SetupDefaultAddItemMessage())
             {
-                Utils.Utils.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetNewItemUploadText());
+                DisplayService.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetNewItemUploadText());
 
             }
         }
@@ -820,10 +884,11 @@ namespace MVVMCrud.ViewModels.Base
         {
             if (SetupDefaultDeleteItemMessage())
             {
-                Utils.Utils.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetDeleteItemUploadText());
+                DisplayService.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetDeleteItemUploadText());
 
             }
         }
+
 
         public override async void TlbSendClick()
         {
@@ -839,7 +904,6 @@ namespace MVVMCrud.ViewModels.Base
                 { "selectedItems", l}
             };
 
-            //var navResult = await NavigationService.GoBackAsync(navParams, useModalNavigation: true);
             var navResult = await NavigationService.GoBackAsync(navParams);
         }
     }
@@ -850,5 +914,5 @@ namespace MVVMCrud.ViewModels.Base
         public bool IsAnimate { get; set; }
     }
 
-    
+
 }

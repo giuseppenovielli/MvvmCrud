@@ -1,12 +1,12 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using MVVMCrud.Services.Request;
 using MVVMCrud.Views;
 using Prism.Navigation;
 
-
 namespace MVVMCrud.ViewModels.Base
 {
-    public class BaseListViewModel : BaseViewModel
+    public class BaseListViewModel : BasePageViewModel
     {
         public EmptyViewModel EmptyVM { get; }
         public EmptyView EmptyView { get; set; }
@@ -46,18 +46,12 @@ namespace MVVMCrud.ViewModels.Base
             }
         }
 
-        public ICommand TlbAddCommandClick { get; private set; }
-        public ICommand TlbSendCommandClick { get; private set; }
-        public ICommand TlbOptionsCommandClick { get; private set; }
-
         public BaseListViewModel(
             INavigationService navigationService,
-            IRequestService requestService = null) : base(navigationService, requestService)
+            IRequestService requestService) : base(navigationService, requestService)
         {
 
-            EmptyVM = new EmptyViewModel(NavigationService)
-            {
-            };
+            EmptyVM = new EmptyViewModel();
 
             EmptyView = new EmptyView()
             {

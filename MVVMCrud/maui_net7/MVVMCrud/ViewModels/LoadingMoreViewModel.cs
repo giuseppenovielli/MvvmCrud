@@ -15,8 +15,7 @@ namespace MVVMCrud.ViewModels
 
         public ICommand LoadingMoreClickCommand { get; set; }
 
-        public LoadingMoreViewModel(
-            INavigationService navigationService) : base(navigationService)
+        public LoadingMoreViewModel()
         {
             LoadingMoreIsVisible = false;
             BtnLoadingMoreIsVisible = false;

@@ -3,25 +3,6 @@ MvvmCrud helps your Xamarin.Forms app with Prism Library to standardize operatio
 
 ![image info](https://img.shields.io/nuget/v/MvvmCrud.Forms.Prism)
 
-## Installation
-
-Add nuget package only .net standard project, it doesn't have platform specific references.
-https://www.nuget.org/packages/MvvmCrud.Forms.Prism
-```
-Install-Package MvvmCrud.Forms.Prism -Version 0.0.1
-```
-
-into App.xaml.cs add the foolowing code
-
-```
-protected override void RegisterTypes(IContainerRegistry containerRegistry)
-{
-    MVVMCrudApplication.RegisterServices(containerRegistry);
-}
-```
-
-Done!
-
 ## How it works
 
 This framework standardize CRUD's operations into ViewModel's file using generic T type, endpoint's requests and fully customizable.
@@ -42,7 +23,9 @@ Only with these following lines of code your page can:
 All fully customizable!
 
 ```
-public class PostPageViewModel : BaseListPaginationAdvancedViewModel
+namespace MVVMCrud.Example.ViewModels.Post
+{
+    public class PostPageViewModel : BaseListPaginationAdvancedViewModel
         <PostCellViewModel, BaseModelItemsRoot<PostItem>, PostItem>
     {
         public PostPageViewModel(
@@ -56,31 +39,28 @@ public class PostPageViewModel : BaseListPaginationAdvancedViewModel
             return Constants.Constants.METHOD_POST;
         }
 
-        public override List<PostCellViewModel> PerformSearchSetup(string newText)
+        public override async void AddNewItem(PostItem item)
         {
-            var newTextLower = newText.ToLower();
-            return ItemsList.Where((PostCellViewModel arg1, int arg2) =>
-            {
-                var item = arg1.Item;
-                if (
-                        !string.IsNullOrWhiteSpace(item.Title)
-                        &&
-                        item.Title.ToLower().Contains(newTextLower)
-                    )
-                {
-                    return true;
-                }
-                return false;
-
-            }).ToList();
+            SetupAddItemMessage();
+            await SetupGetItems();
         }
 
-        public override string SetupDetailPageName()
+        public override async void UpdateEditItem(NewEditItem<PostItem> newEditItem)
         {
-            return nameof(CommentPage);
+            SetupEditItemMessage();
+            await SetupGetItems();
         }
+
+        public override List<PostCellViewModel> PerformSearchSetup(string newText) => ItemsList.Where(x => x.Item.Title.Contains(newText.ToLower())).ToList();
+
+        #region DetailPage
+        public override string SetupDetailPageName(PostCellViewModel obj) => nameof(CommentPage);
+
+        public override bool IsDetailPageWithHeader(PostCellViewModel obj) => true;
+        #endregion
 
     }
+}
 ```
 
 

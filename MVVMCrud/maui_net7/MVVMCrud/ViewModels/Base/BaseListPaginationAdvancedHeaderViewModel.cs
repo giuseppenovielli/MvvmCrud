@@ -40,7 +40,7 @@ namespace MVVMCrud.ViewModels.Base
         public THeaderItem HeaderItem { get; set; }
 
         public THeaderCellVM HeaderVM { get; set; }
-        public Views.Base.BaseContentView HeaderView { get; set; }
+        public BaseContentView HeaderView { get; set; }
 
         public NewEditItem<THeaderItem> HeaderEdited { get; private set; }
 
@@ -222,6 +222,7 @@ namespace MVVMCrud.ViewModels.Base
         {
             var navParams = new NavigationParameters
             {
+                { "position", HeaderPosition },
                 { "endpoint", HeaderEndpoint },
                 { "itemSerialized", SetupHeaderCreateUpdatePageItemSerialized(cellVM) },
             };
@@ -251,13 +252,15 @@ namespace MVVMCrud.ViewModels.Base
 
                 var pageNewEdit = pageName + "NewEditPage";
 
+                return pageNewEdit;
+
                 if (!SetupCreateUpdatePageIsModal())
                 {
                     return pageNewEdit;
                 }
                 else
                 {
-                    return string.Format("{0}/{1}", nameof(CustomNavigationPage), pageNewEdit);
+                    return string.Format("{0}/{1}", nameof(MVVMCrudModalNavigationPage), pageNewEdit);
                 }
             }
 

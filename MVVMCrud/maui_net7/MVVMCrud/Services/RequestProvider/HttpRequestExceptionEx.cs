@@ -1,5 +1,5 @@
 ﻿using System;
-namespace HRCoffee.Services.RequestProvider
+namespace MVVMCrud.Services.RequestProvider
 {
     public class HttpRequestUrlEmptyExceptionEx : Exception
     {

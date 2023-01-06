@@ -11,7 +11,6 @@ namespace MVVMCrud.Controls
             SetBinding(TextProperty, new Binding() { Path = "SearchText" });
             SetBinding(PlaceholderProperty, new Binding() { Path = "SearchBarPlaceholder" });
             SetBinding(IsVisibleProperty, new Binding() { Path = "SearchBarIsVisible" });
-            HorizontalOptions = LayoutOptions.FillAndExpand;
 
             Focused += (object sender, FocusEventArgs e) =>
             {

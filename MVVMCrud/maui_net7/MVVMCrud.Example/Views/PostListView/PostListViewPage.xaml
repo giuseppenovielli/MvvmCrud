@@ -21,9 +21,7 @@
             Grid.Row="0"/>
 
         <controls:MVVMCrudListView
-            Grid.Row="1"
-            IsPullToRefreshEnabled="True"
-            ItemsSource="{Binding ItemsSource}">
+            Grid.Row="1">
             <x:Arguments>
                 <ListViewCachingStrategy>RecycleElement</ListViewCachingStrategy>
             </x:Arguments>

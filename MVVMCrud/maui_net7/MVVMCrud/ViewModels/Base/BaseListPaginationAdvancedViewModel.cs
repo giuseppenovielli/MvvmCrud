@@ -81,7 +81,7 @@ namespace MVVMCrud.ViewModels.Base
         {
             var pageName = Utils.Utils.GetPageNameWithUnderscore(GetType().Name, "PageViewModel");
             var label = string.Format("title_page_{0}", pageName);
-            return AppResources.ResourceManager.GetString(label)
+            return MVVMCrudApplication.GetAppResourceManager().GetString(label);
         }
 
         public virtual FormUrlEncodedContent SetupContentQuery()
@@ -398,13 +398,15 @@ namespace MVVMCrud.ViewModels.Base
 
                 var pageNewEdit = pageName + "NewEditPage";
 
+                return pageNewEdit;
+
                 if (!SetupCreateUpdatePageIsModal())
                 {
                     return pageNewEdit;
                 }
                 else
                 {
-                    return string.Format("{0}/{1}", nameof(CustomNavigationPage), pageNewEdit);
+                    return string.Format("{0}/{1}", nameof(MVVMCrudModalNavigationPage), pageNewEdit);
                 }
 
 
@@ -536,47 +538,34 @@ namespace MVVMCrud.ViewModels.Base
             var position = ItemsSource.IndexOf(obj);
             var fromPageName = GetType().Name;
 
+            var navParams = new NavigationParameters
+            {
+                { "position", position },
+                { "fromPageViewModelName", fromPageName},
+            };
+
+            if (withHeader)
+            {
+                navParams.Add("headerId", id);
+                navParams.Add("headerEndpoint", Endpoint);
+            }
+            else
+            {
+                navParams.Add("id", id);
+            }
+
+            modal = false;
             if (!modal)
             {
-                var navParams = new NavigationParameters
-                {
-                    { "position", position },
-                    { "fromPageViewModelName", fromPageName},
-                };
-
-                if (withHeader)
-                {
-                    navParams.Add("headerId", id);
-                    navParams.Add("headerEndpoint", Endpoint);
-                }
-                else
-                {
-                    navParams.Add("id", id);
-                }
-
                 var navResult = await NavigationService.NavigateAsync(pageName, navParams);
             }
             else
             {
-                var navParams = new Dictionary<string, object>
-                {
-                    { "position", position },
-                    { "fromPageViewModelName", fromPageName },
-                };
-
-                if (withHeader)
-                {
-                    navParams.Add("headerId", id);
-                    navParams.Add("headerEndpoint", Endpoint);
-                }
-                else
-                {
-                    navParams.Add("id", id);
-                }
-
-                var navResult = await PageService?.PushModalPage(pageName, navParams);
+                pageName = nameof(MVVMCrudModalNavigationPage) + "/" + pageName;
+                //var navResult = await NavigationService.NavigateAsync(pageName, navParams, useModalNavigation=modal);
             }
-            
+
+
         }
 
         public override void PerformSearch(string newText)
@@ -857,7 +846,7 @@ namespace MVVMCrud.ViewModels.Base
         {
             if (SetupDefaultEditItemMessage())
             {
-                DisplayService.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetEditItemUploadText());
+                Utils.Utils.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetEditItemUploadText());
             }
         }
 
@@ -870,7 +859,7 @@ namespace MVVMCrud.ViewModels.Base
         {
             if (SetupDefaultAddItemMessage())
             {
-                DisplayService.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetNewItemUploadText());
+                Utils.Utils.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetNewItemUploadText());
 
             }
         }
@@ -884,7 +873,7 @@ namespace MVVMCrud.ViewModels.Base
         {
             if (SetupDefaultDeleteItemMessage())
             {
-                DisplayService.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetDeleteItemUploadText());
+                Utils.Utils.DisplaySimplyAlert(TitlePage, MVVMCrudApplication.GetDeleteItemUploadText());
 
             }
         }

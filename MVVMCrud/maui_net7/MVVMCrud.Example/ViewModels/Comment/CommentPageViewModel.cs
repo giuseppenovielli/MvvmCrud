@@ -9,6 +9,7 @@ using MVVMCrud.Services.Request;
 using MVVMCrud.ViewModels.Base;
 using MVVMCrud.Views.Base;
 using Prism.Navigation;
+using MVVMCrud.Example.Views.PostNewEdit;
 
 namespace MVVMCrud.Example.ViewModels.Comment
 {
@@ -29,47 +30,21 @@ namespace MVVMCrud.Example.ViewModels.Comment
 
 
         #region SetupHeader
-        public override string SetupHeaderEndpoint()
-        {
-            return Constants.Constants.METHOD_POST;
-        }
+        public override PostCellViewModel SetupHeaderInstanceCell(PostItem item) => new PostCellViewModel(item, false);
 
-        public override PostCellViewModel SetupHeaderInstanceCell(PostItem item)
-        {
-            return new PostCellViewModel(item, false);
-        }
+        public override BaseContentView SetupHeaderView() => new PostCell();
 
-        public override BaseContentView SetupHeaderView()
+        public override async void UpdateEditHeaderItem(NewEditItem<PostItem> editHeaderItem)
         {
-            return new PostCell();
-        }
-
-        public override string SetupFromPageViewModelName()
-        {
-            return nameof(PostPageViewModel);
+            SetupEditItemMessage();
+            await GetHeader();
         }
         #endregion
 
-        public override string SetupTitlePage()
-        {
-            return AppResources.title_page_post_comments;
-        }
+        public override string SetupEndpoint() => string.Format("{0}{1}/comments/", Constants.Constants.METHOD_POST, HeaderID);
 
-        public override string SetupEndpoint()
-        {
-            return string.Format("{0}{1}/comments/", Constants.Constants.METHOD_POST, HeaderID);
-        }
+        public override List<BaseCellViewModel<CommentItem>> PerformSearchSetup(string newText) => ItemsList.Where(o => o.Item.Name.ToLower().Contains(newText.ToLower())).ToList();
 
-        public override List<BaseCellViewModel<CommentItem>> PerformSearchSetup(string newText)
-        {
-            var newTextLower = newText.ToLower();
-            var l = ItemsList.Where(o => o.Item.Name.ToLower().Contains(newTextLower)).ToList();
-            return l;
-        }
-
-        public override bool SetupIsPaginationEnable()
-        {
-            return false;
-        }
+        public override bool SetupIsPaginationEnable() => false;
     }
 }

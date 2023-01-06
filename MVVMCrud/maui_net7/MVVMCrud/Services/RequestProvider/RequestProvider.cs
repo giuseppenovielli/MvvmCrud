@@ -1,55 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using HRCoffee.Models.RequestResponse;
-using HRCoffee.Services.Platform;
-using Microsoft.AppCenter.Crashes;
-using Xamarin.Forms;
+using MVVMCrud.Models.RequestResponse;
 
-namespace HRCoffee.Services.RequestProvider
+namespace MVVMCrud.Services.RequestProvider
 {
     public class RequestProvider : IRequestProvider
     {
-        private string _clientId;
-        private string _clientVersione;
-        private readonly MediaTypeWithQualityHeaderValue _mediaTypeWithQualityHeaderValue;
-
-        public RequestProvider(IPlatformService platformService)
+        public RequestProvider()
         {
-            _clientId = "android";
-            if (Device.RuntimePlatform == Device.iOS)
-            {
-                _clientId = "ios";
-            }
-
-
-            _clientVersione = platformService.GetAppVersion();
-            if (string.IsNullOrWhiteSpace(_clientVersione))
-            {
-                _clientVersione = string.Empty;
-            }
-
-            _mediaTypeWithQualityHeaderValue = new MediaTypeWithQualityHeaderValue("application/json");
         }
 
-        public async Task<RequestResponseItem> GetAsync(string apiUrl, string token = null, HttpClient httpClient = null, FormUrlEncodedContent content_query = null)
+        public async Task<RequestResponseItem> GetAsync(string apiUrl, HttpClient httpClient = null, FormUrlEncodedContent content_query = null)
         {
-            System.Diagnostics.Debug.WriteLine("\nGetAsync");
+            System.Diagnostics.Debug.WriteLine("\nMVVMCrud GetAsync");
             System.Diagnostics.Debug.WriteLine("GetAsync apiUrl = " + apiUrl);
-            System.Diagnostics.Debug.WriteLine("GetAsync token = " + token);
-            System.Diagnostics.Debug.WriteLine("GetAsync HttpClient = " + httpClient);
 
             RequestResponseItem responseItem = null;
 
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
-                var client = CreateHttpClient(httpClient, token);
+                var client = RequestProvider.CreateHttpClient(httpClient);
 
                 try
                 {
-
                     if (content_query != null)
                     {
                         apiUrl += "?" + await content_query.ReadAsStringAsync();
@@ -60,9 +35,9 @@ namespace HRCoffee.Services.RequestProvider
                     string json = await response.Content.ReadAsStringAsync();
                     var responseStatus = response.StatusCode;
 
-                    responseItem = new RequestResponseItem(responseStatus, json);
+                    responseItem = new RequestResponseItem(responseStatus, json, response.Headers);
 
-                    System.Diagnostics.Debug.WriteLine("ResposeCode = " + responseStatus);
+                    System.Diagnostics.Debug.WriteLine("ResposeCode = "+ responseStatus);
                     System.Diagnostics.Debug.WriteLine("message = " + json);
                 }
                 catch (Exception e)
@@ -72,11 +47,6 @@ namespace HRCoffee.Services.RequestProvider
                     System.Diagnostics.Debug.WriteLine("GetAsync Exception = " + e.ToString());
                     System.Diagnostics.Debug.WriteLine("ResposeCode = null");
                     System.Diagnostics.Debug.WriteLine("message = " + e.ToString());
-                    var properties = new Dictionary<string, string>
-                    {
-                        { "apiUrl", apiUrl },
-                    };
-                    Crashes.TrackError(e, properties);
                 }
             }
             else
@@ -87,17 +57,23 @@ namespace HRCoffee.Services.RequestProvider
             return responseItem;
         }
 
-        public async Task<RequestResponseItem> GetAsyncPagination(string apiUrl, string token = null, HttpClient httpClient = null, string urlPagination = null, bool pagination = true, FormUrlEncodedContent content_query = null, int paginationSize = 0, string string_query = null)
+        public async Task<RequestResponseItem> GetAsyncPagination(string apiUrl,
+                                                                HttpClient httpClient = null,
+                                                                string urlPagination = null,
+                                                                bool pagination = true,
+                                                                FormUrlEncodedContent content_query = null,
+                                                                int paginationSize = 0,
+                                                                string string_query = null,
+                                                                Action<List<KeyValuePair<string, string>>, bool, int> paginationRequest = null)
         {
-            System.Diagnostics.Debug.WriteLine("\nGetAsync");
-            System.Diagnostics.Debug.WriteLine("GetAsync token = " + token);
-            System.Diagnostics.Debug.WriteLine("GetAsync HttpClient = " + httpClient);
+            System.Diagnostics.Debug.WriteLine("\nMVVMCrud GetAsyncPagination");
+            System.Diagnostics.Debug.WriteLine("GetAsyncPagination apiUrl = " + apiUrl);
 
             RequestResponseItem responseItem = null;
 
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
-                var client = CreateHttpClient(httpClient, token);
+                var client = RequestProvider.CreateHttpClient(httpClient);
 
                 try
                 {
@@ -105,19 +81,13 @@ namespace HRCoffee.Services.RequestProvider
                     {
                         var dataGet = new List<KeyValuePair<string, string>>();
 
-                        if (pagination)
+                        if (paginationRequest== null)
                         {
-                            dataGet.Add(new KeyValuePair<string, string>("page", "1"));
-                            if (paginationSize > 0)
-                            {
-                                dataGet.Add(new KeyValuePair<string, string>("page_size", paginationSize.ToString()));
-                            }
-
+                            MVVMCrudApplication.Instance.SetupPaginationRequest(dataGet, pagination, paginationSize);
                         }
                         else
                         {
-                            dataGet.Add(new KeyValuePair<string, string>("page_size", "0"));
-
+                            paginationRequest.Invoke(dataGet, pagination, paginationSize);
                         }
 
                         var content = new FormUrlEncodedContent(dataGet);
@@ -146,7 +116,7 @@ namespace HRCoffee.Services.RequestProvider
                     string json = await response.Content.ReadAsStringAsync();
                     var responseStatus = response.StatusCode;
 
-                    responseItem = new RequestResponseItem(responseStatus, json);
+                    responseItem = new RequestResponseItem(responseStatus, json, response.Headers);
 
                     System.Diagnostics.Debug.WriteLine("ResposeCode = " + responseStatus);
                     System.Diagnostics.Debug.WriteLine("message = " + json);
@@ -158,11 +128,6 @@ namespace HRCoffee.Services.RequestProvider
                     System.Diagnostics.Debug.WriteLine("GetAsync Exception = " + e.ToString());
                     System.Diagnostics.Debug.WriteLine("ResposeCode = null");
                     System.Diagnostics.Debug.WriteLine("message = " + e.ToString());
-                    var properties = new Dictionary<string, string>
-                    {
-                        { "apiUrl", apiUrl },
-                    };
-                    Crashes.TrackError(e, properties);
                 }
             }
             else
@@ -173,35 +138,28 @@ namespace HRCoffee.Services.RequestProvider
             return responseItem;
         }
 
-
-        public async Task<RequestResponseItem> PostAsync(string apiUrl, HttpContent data = null, string token = null, HttpClient httpClient = null)
+        public async Task<RequestResponseItem> PostAsync(string apiUrl, HttpContent httpContent = null, HttpClient httpClient = null) 
         {
-
-
-            System.Diagnostics.Debug.WriteLine("\nPostAsync");
+            System.Diagnostics.Debug.WriteLine("\nMVVMCrud PostAsync");
             System.Diagnostics.Debug.WriteLine("PostAsync apiUrl = " + apiUrl);
-            System.Diagnostics.Debug.WriteLine("PostAsync data = " + data);
-            System.Diagnostics.Debug.WriteLine("PostAsync token = " + token);
-            System.Diagnostics.Debug.WriteLine("PostAsync HttpClient = " + httpClient);
-
+            System.Diagnostics.Debug.WriteLine("PostAsync data = " + httpContent);
 
             RequestResponseItem responseItem = null;
 
 
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
-                var client = CreateHttpClient(httpClient, token);
+                var client = RequestProvider.CreateHttpClient(httpClient);
 
                 try
                 {
 
-                    //var content = new StringContent(JsonConvert.SerializeObject(data));
-                    var response = await client.PostAsync(apiUrl, data);
+                    var response = await client.PostAsync(apiUrl, httpContent);
 
                     string json = await response.Content.ReadAsStringAsync();
                     var responseStatus = response.StatusCode;
 
-                    responseItem = new RequestResponseItem(responseStatus, json);
+                    responseItem = new RequestResponseItem(responseStatus, json, response.Headers);
 
 
                     System.Diagnostics.Debug.WriteLine("httpcode = " + responseStatus);
@@ -214,11 +172,6 @@ namespace HRCoffee.Services.RequestProvider
                     System.Diagnostics.Debug.WriteLine("PostAsync Exception = " + e.ToString());
                     System.Diagnostics.Debug.WriteLine("httpcode = null");
                     System.Diagnostics.Debug.WriteLine("response = " + e.ToString());
-                    var properties = new Dictionary<string, string>
-                    {
-                        { "apiUrl", apiUrl },
-                    };
-                    Crashes.TrackError(e, properties);
                 }
             }
             else
@@ -230,13 +183,11 @@ namespace HRCoffee.Services.RequestProvider
 
         }
 
-        public async Task<RequestResponseItem> PostMultipartFormAsync(string apiUrl, MultipartFormDataContent data = null, string token = null, HttpClient httpClient = null)
+        public async Task<RequestResponseItem> PostMultipartFormAsync(string apiUrl, MultipartFormDataContent data = null, HttpClient httpClient = null)
         {
-            System.Diagnostics.Debug.WriteLine("\nPostMultipartFormAsync");
+            System.Diagnostics.Debug.WriteLine("\nMVVMCrud PostMultipartFormAsync");
             System.Diagnostics.Debug.WriteLine("PostMultipartFormAsync apiUrl = " + apiUrl);
             System.Diagnostics.Debug.WriteLine("PostMultipartFormAsync data = " + data);
-            System.Diagnostics.Debug.WriteLine("PostMultipartFormAsync token = " + token);
-            System.Diagnostics.Debug.WriteLine("PostMultipartFormAsync HttpClient = " + httpClient);
 
 
             RequestResponseItem responseItem = null;
@@ -244,7 +195,7 @@ namespace HRCoffee.Services.RequestProvider
 
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
-                var client = CreateHttpClient(httpClient, token);
+                var client = RequestProvider.CreateHttpClient(httpClient);
 
                 try
                 {
@@ -254,7 +205,7 @@ namespace HRCoffee.Services.RequestProvider
                     string json = await response.Content.ReadAsStringAsync();
                     var responseStatus = response.StatusCode;
 
-                    responseItem = new RequestResponseItem(responseStatus, json);
+                    responseItem = new RequestResponseItem(responseStatus, json, response.Headers);
 
 
                     System.Diagnostics.Debug.WriteLine("httpcode = " + responseStatus);
@@ -267,12 +218,6 @@ namespace HRCoffee.Services.RequestProvider
                     System.Diagnostics.Debug.WriteLine("PostAsync Exception = " + e.ToString());
                     System.Diagnostics.Debug.WriteLine("httpcode = null");
                     System.Diagnostics.Debug.WriteLine("response = " + e.ToString());
-
-                    var properties = new Dictionary<string, string>
-                    {
-                        { "apiUrl", apiUrl },
-                    };
-                    Crashes.TrackError(e, properties);
                 }
             }
             else
@@ -283,22 +228,17 @@ namespace HRCoffee.Services.RequestProvider
             return responseItem;
         }
 
-        public async Task<RequestResponseItem> DeleteAsync(string apiUrl, string token = null, HttpClient httpClient = null)
+        public async Task<RequestResponseItem> DeleteAsync(string apiUrl, HttpClient httpClient = null)
         {
-
-
-            System.Diagnostics.Debug.WriteLine("\nDeleteAsync");
+            System.Diagnostics.Debug.WriteLine("\nMVVMCrud DeleteAsync");
             System.Diagnostics.Debug.WriteLine("DeleteAsync apiUrl = " + apiUrl);
-            System.Diagnostics.Debug.WriteLine("DeleteAsync token = " + token);
-            System.Diagnostics.Debug.WriteLine("DeleteAsync HttpClient = " + httpClient);
-
 
             RequestResponseItem responseItem = null;
 
 
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
-                var client = CreateHttpClient(httpClient, token);
+                var client = RequestProvider.CreateHttpClient(httpClient);
 
                 try
                 {
@@ -308,7 +248,7 @@ namespace HRCoffee.Services.RequestProvider
                     string json = await response.Content.ReadAsStringAsync();
                     var responseStatus = response.StatusCode;
 
-                    responseItem = new RequestResponseItem(responseStatus, json);
+                    responseItem = new RequestResponseItem(responseStatus, json, response.Headers);
 
 
                     System.Diagnostics.Debug.WriteLine("httpcode = " + responseStatus);
@@ -321,11 +261,7 @@ namespace HRCoffee.Services.RequestProvider
                     System.Diagnostics.Debug.WriteLine("DeleteAsync Exception = " + e.ToString());
                     System.Diagnostics.Debug.WriteLine("httpcode = null");
                     System.Diagnostics.Debug.WriteLine("response = " + e.ToString());
-                    var properties = new Dictionary<string, string>
-                    {
-                        { "apiUrl", apiUrl },
-                    };
-                    Crashes.TrackError(e, properties);
+
                 }
             }
             else
@@ -337,22 +273,11 @@ namespace HRCoffee.Services.RequestProvider
 
         }
 
-
-        public async Task<RequestResponseItem> PutAsync(string apiUrl, HttpContent data = null, string token = null, HttpClient httpClient = null)
+        public async Task<RequestResponseItem> PutAsync(string apiUrl, HttpContent data = null, HttpClient httpClient = null)
         {
-
-
-            System.Diagnostics.Debug.WriteLine("\nPutAsync");
+            System.Diagnostics.Debug.WriteLine("\nMVVMCrud PutAsync");
             System.Diagnostics.Debug.WriteLine("PutAsync apiUrl = " + apiUrl);
-
-            if (data != null)
-            {
-                System.Diagnostics.Debug.WriteLine("PutAsync data = " + await data?.ReadAsStringAsync());
-            }
-
-            System.Diagnostics.Debug.WriteLine("PutAsync token = " + token);
-            System.Diagnostics.Debug.WriteLine("PutAsync HttpClient = " + httpClient);
-
+            System.Diagnostics.Debug.WriteLine("PutAsync data = " + data);
 
             RequestResponseItem responseItem = null;
 
@@ -360,7 +285,7 @@ namespace HRCoffee.Services.RequestProvider
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
 
-                var client = CreateHttpClient(httpClient, token);
+                var client = RequestProvider.CreateHttpClient(httpClient);
 
                 try
                 {
@@ -369,7 +294,7 @@ namespace HRCoffee.Services.RequestProvider
                     string json = await response.Content.ReadAsStringAsync();
                     var responseStatus = response.StatusCode;
 
-                    responseItem = new RequestResponseItem(responseStatus, json);
+                    responseItem = new RequestResponseItem(responseStatus, json, response.Headers);
 
 
                     System.Diagnostics.Debug.WriteLine("httpcode = " + responseStatus);
@@ -382,11 +307,6 @@ namespace HRCoffee.Services.RequestProvider
                     System.Diagnostics.Debug.WriteLine("PutAsync Exception = " + e.ToString());
                     System.Diagnostics.Debug.WriteLine("httpcode = null");
                     System.Diagnostics.Debug.WriteLine("response = " + e.ToString());
-                    var properties = new Dictionary<string, string>
-                    {
-                        { "apiUrl", apiUrl },
-                    };
-                    Crashes.TrackError(e, properties);
                 }
             }
             else
@@ -400,16 +320,15 @@ namespace HRCoffee.Services.RequestProvider
 
         public async Task<RequestResponseItem> GetByteArray(string apiUrl, HttpClient httpClient = null, bool header = true)
         {
-            System.Diagnostics.Debug.WriteLine("\nGetByteArray");
-            System.Diagnostics.Debug.WriteLine("GetAsync apiUrl = " + apiUrl);
-            System.Diagnostics.Debug.WriteLine("GetAsync HttpClient = " + httpClient);
+            System.Diagnostics.Debug.WriteLine("\nMVVMCrud GetByteArray");
+            System.Diagnostics.Debug.WriteLine("GetByteArray apiUrl = " + apiUrl);
 
             RequestResponseItem responseItem = null;
 
             if (!string.IsNullOrWhiteSpace(apiUrl))
             {
 
-                var client = CreateHttpClient(httpClient, header: header);
+                var client = RequestProvider.CreateHttpClient(httpClient, header: header);
 
                 try
                 {
@@ -419,7 +338,7 @@ namespace HRCoffee.Services.RequestProvider
                     var byteArray = await response.Content.ReadAsByteArrayAsync();
                     var responseStatus = response.StatusCode;
 
-                    responseItem = new RequestResponseItem(responseStatus, null, byteArray);
+                    responseItem = new RequestResponseItem(responseStatus, null, response.Headers, byteArray);
 
                     System.Diagnostics.Debug.WriteLine("ResposeCode = " + responseStatus);
                     System.Diagnostics.Debug.WriteLine("byteArray = " + byteArray);
@@ -432,11 +351,6 @@ namespace HRCoffee.Services.RequestProvider
                     System.Diagnostics.Debug.WriteLine("GetByteArray Exception = " + e.ToString());
                     System.Diagnostics.Debug.WriteLine("ResposeCode = null");
                     System.Diagnostics.Debug.WriteLine("message = " + e.ToString());
-                    var properties = new Dictionary<string, string>
-                    {
-                        { "apiUrl", apiUrl },
-                    };
-                    Crashes.TrackError(e, properties);
                 }
             }
             else
@@ -447,43 +361,19 @@ namespace HRCoffee.Services.RequestProvider
             return responseItem;
         }
 
-        HttpClient CreateHttpClient(HttpClient httpClient = null, string token = null, bool header = true)
+        static HttpClient CreateHttpClient(HttpClient httpClient = null, bool header = true)
         {
             var httpClientInstance = httpClient;
             if (header)
             {
-                if (httpClient == null)
+                if (httpClientInstance == null)
                 {
-                    httpClientInstance = new HttpClient();
+                    httpClientInstance = MVVMCrudApplication.Instance?.HttpClient;
+                    if (httpClientInstance == null)
+                    {
+                        httpClientInstance = new HttpClient();
+                    }
                 }
-
-                var authHeader = httpClientInstance.DefaultRequestHeaders;
-                authHeader.Authorization = null;
-
-                var authorization = authHeader.Authorization;
-                if (!string.IsNullOrWhiteSpace(token) && authorization == null)
-                {
-                    httpClientInstance.DefaultRequestHeaders.Add("Authorization", "token " + token);
-
-                }
-
-
-                IEnumerable<string> values;
-                if (!authHeader.TryGetValues("clientId", out values))
-                {
-                    httpClientInstance.DefaultRequestHeaders.Add("clientId", _clientId);
-                }
-
-                if (!authHeader.TryGetValues("clientVersione", out values))
-                {
-                    httpClientInstance.DefaultRequestHeaders.Add("clientVersione", _clientVersione);
-                }
-
-                if (!authHeader.Accept.Contains(_mediaTypeWithQualityHeaderValue))
-                {
-                    httpClientInstance.DefaultRequestHeaders.Accept.Add(_mediaTypeWithQualityHeaderValue);
-                }
-
             }
             else
             {
@@ -492,7 +382,6 @@ namespace HRCoffee.Services.RequestProvider
 
             return httpClientInstance;
         }
-
 
     }
 }

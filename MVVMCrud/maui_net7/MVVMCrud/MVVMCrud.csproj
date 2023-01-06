@@ -47,10 +47,12 @@
 	  <None Remove="Newtonsoft.Json" />
 	  <None Remove="PropertyChanged.Fody" />
 	  <None Remove="Prism.DryIoc.Maui" />
+	  <None Remove="CommunityToolkit.Maui" />
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 	  <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
 	  <PackageReference Include="Prism.DryIoc.Maui" Version="8.1.273-pre" />
+	  <PackageReference Include="CommunityToolkit.Maui" Version="3.0.0" />
 	</ItemGroup>
 </Project>

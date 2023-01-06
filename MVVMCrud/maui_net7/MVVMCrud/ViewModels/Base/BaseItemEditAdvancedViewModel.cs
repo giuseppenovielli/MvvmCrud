@@ -31,9 +31,28 @@ namespace MVVMCrud.ViewModels.Base
             Section = -1;
         }
 
-        public override async void Initialize(INavigationParameters parameters)
+  
+        public override void Initialize(INavigationParameters parameters)
         {
             base.Initialize(parameters);
+
+            if (ItemInput == null)
+            {
+                ItemInput = new TItemInput();
+            }
+
+            if (string.IsNullOrWhiteSpace(Endpoint))
+            {
+                Endpoint = SetupEndpoint();
+            }
+
+            SetupValidations();
+            SetupInterface();
+        }
+
+        public override async void InitializeParameters(INavigationParameters parameters)
+        {
+            base.InitializeParameters(parameters);
 
             if (parameters.ContainsKey("endpoint"))
             {
@@ -42,8 +61,12 @@ namespace MVVMCrud.ViewModels.Base
 
             if (parameters.ContainsKey("itemSerialized"))
             {
-                var itemSerialized = parameters["itemSerialized"] as string;
-                Position = (int)parameters["position"];
+                var itemSerialized = parameters.GetValue<string>("itemSerialized");
+                if (parameters.ContainsKey("position"))
+                {
+                    Position = parameters.GetValue<int>("position");
+                }
+                
 
                 if (!string.IsNullOrWhiteSpace(itemSerialized))
                 {
@@ -63,19 +86,6 @@ namespace MVVMCrud.ViewModels.Base
                 Position = -1;
                 Section = -1;
             }
-
-            if (ItemInput == null)
-            {
-                ItemInput = new TItemInput();
-            }
-
-            if (string.IsNullOrWhiteSpace(Endpoint))
-            {
-                Endpoint = SetupEndpoint();
-            }
-
-            SetupValidations();
-            SetupInterface();
         }
 
         public virtual JsonSerializerSettings SetupJsonDeserializerSettings()
@@ -140,14 +150,14 @@ namespace MVVMCrud.ViewModels.Base
         {
             var pageName = Utils.Utils.GetPageNameWithUnderscore(GetType().Name, "NewEditPageViewModel");
             var label = string.Format("title_page_{0}_new", pageName);
-            return LocalizationService.GetTextByKey(label);
+            return MVVMCrudApplication.GetAppResourceManager().GetString(label);
         }
 
         public virtual string SetupTitlePageEdit()
         {
             var pageName = Utils.Utils.GetPageNameWithUnderscore(GetType().Name, "NewEditPageViewModel");
             var label = string.Format("title_page_{0}_edit", pageName);
-            return LocalizationService.GetTextByKey(label);
+            return MVVMCrudApplication.GetAppResourceManager().GetString(label);
         }
 
         public override string SetupTitlePage()

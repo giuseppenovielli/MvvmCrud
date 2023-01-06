@@ -58,20 +58,20 @@ namespace MVVMCrud.Example {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Comments.
+        /// </summary>
+        internal static string title_page_comment {
+            get {
+                return ResourceManager.GetString("title_page_comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Posts.
         /// </summary>
         internal static string title_page_post {
             get {
                 return ResourceManager.GetString("title_page_post", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Comments.
-        /// </summary>
-        internal static string title_page_post_comments {
-            get {
-                return ResourceManager.GetString("title_page_post_comments", resourceCulture);
             }
         }
         

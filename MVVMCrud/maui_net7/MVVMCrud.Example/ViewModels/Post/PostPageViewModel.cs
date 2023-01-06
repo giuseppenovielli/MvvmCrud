@@ -5,7 +5,6 @@ using MVVMCrud.Example.Views.Comment;
 using MVVMCrud.Models.Base;
 using MVVMCrud.Services.Request;
 using MVVMCrud.ViewModels.Base;
-using Prism.Navigation;
 
 namespace MVVMCrud.Example.ViewModels.Post
 {
@@ -35,15 +34,13 @@ namespace MVVMCrud.Example.ViewModels.Post
             await SetupGetItems();
         }
 
-        public override List<PostCellViewModel> PerformSearchSetup(string newText)
-        {
-            return ItemsList.Where(x => x.Item.Title.Contains(newText.ToLower())).ToList();
-        }
+        public override List<PostCellViewModel> PerformSearchSetup(string newText) => ItemsList.Where(x => x.Item.Title.Contains(newText.ToLower())).ToList();
 
-        public override string SetupDetailPageName()
-        {
-            return nameof(CommentPage);
-        }
+        #region DetailPage
+        public override string SetupDetailPageName(PostCellViewModel obj) => nameof(CommentPage);
+
+        public override bool IsDetailPageWithHeader(PostCellViewModel obj) => true;
+        #endregion
 
     }
 }

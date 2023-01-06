@@ -127,7 +127,7 @@ namespace MVVMCrud.ViewModels.Base
         {
             var pageName = Utils.Utils.GetPageNameWithUnderscore(GetType().Name, "PageViewModel");
             var label = string.Format("title_activity_{0}", pageName);
-            var name = LocalizationService.GetTextByKey(label);
+            var name = MVVMCrudApplication.GetAppResourceManager().GetString(label);
             return name;
         }
 

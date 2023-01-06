@@ -20,6 +20,8 @@ namespace MVVMCrud.ViewModels.Base
         public ICommand TlbOptionsCommandClick { get; set; }
         public ICommand TlbInfoCommandClick { get; set; }
 
+        public bool ClearNavigationStackOnNavigation => throw new NotImplementedException();
+
         public BasePageViewModel(
             INavigationService navigationService,
             IRequestService requestService = null)

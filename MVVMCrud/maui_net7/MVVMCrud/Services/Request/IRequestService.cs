@@ -55,7 +55,7 @@ namespace MVVMCrud.Services.Request
             string title = null,
             HttpClient httpClient = null,
             bool getIfError = false,
-            bool showLoading = false,
+            bool showLoading = true,
             List<HttpStatusCode> httpStatusCodes = null,
             Action setupItem = null);
 
@@ -85,7 +85,7 @@ namespace MVVMCrud.Services.Request
             string title = null,
             HttpClient httpClient = null,
             bool getIfError = false,
-            bool showLoading = false,
+            bool showLoading = true,
             List<HttpStatusCode> httpStatusCodes = null,
             Action setupItem = null)
 
@@ -101,7 +101,8 @@ namespace MVVMCrud.Services.Request
             bool getIfError = false,
             bool showLoading = false,
             List<HttpStatusCode> httpStatusCodes = null,
-            Action setupItem = null)
+            Action setupItem = null,
+            FormUrlEncodedContent contentquery = null)
 
             where TItemRoot : BaseModelItemRoot<TItem>, new()
             where TItem : BaseItem, new();
@@ -121,7 +122,8 @@ namespace MVVMCrud.Services.Request
         Task<TItemRoot> Retrieve<TItemRoot, TItem>
             (string url,
             string pk = null,
-            HttpClient httpClient = null)
+            HttpClient httpClient = null,
+            FormUrlEncodedContent contentquery = null)
 
             where TItemRoot : BaseModelItemRoot<TItem>, new()
             where TItem : BaseItem, new();

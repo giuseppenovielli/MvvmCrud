@@ -9,7 +9,17 @@ namespace MVVMCrud.Models.Base
     {
         [JsonProperty("id")]
         public string Id { get; set; }
+
         public long IdLong { get; set; }
+        public bool ShouldSerializeIdLong() => false;
+
+        [JsonProperty("can_edit")]
+        public bool CanEdit { get; set; }
+        public bool ShouldSerializeCanEdit() => false;
+
+        [JsonProperty("can_delete")]
+        public bool CanDelete { get; set; }
+        public bool ShouldSerializeCanDelete() => false;
 
         public BaseItem()
         {
@@ -20,7 +30,6 @@ namespace MVVMCrud.Models.Base
             try
             {
                 InitializeJObject(item);
-                InitializeIDLong();
 
             }
             catch (System.Exception ex)
@@ -34,6 +43,7 @@ namespace MVVMCrud.Models.Base
             try
             {
                 InitializeJObjectTryCatch(item);
+                InitializeIDLong();
 
             }
             catch (System.Exception ex)
@@ -55,7 +65,14 @@ namespace MVVMCrud.Models.Base
 
         public virtual void InitializeJObjectTryCatch(JObject item)
         {
-            Id = item.GetValue("id").ToString();
+            Id = string.Empty;
+            if (item.ContainsKey("id"))
+            {
+                Id = item.GetValue("id").ToString();
+            }
+
         }
+
+
     }
 }

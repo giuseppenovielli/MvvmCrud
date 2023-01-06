@@ -12,6 +12,7 @@ using MVVMCrud.Utils;
 using MVVMCrud.Utils.Request;
 using MVVMCrud.Views;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Prism.Ioc;
 
 namespace MVVMCrud
@@ -151,6 +152,16 @@ namespace MVVMCrud
 
             settings.Converters = GetJsonConverters();
 
+            return settings;
+        }
+
+        public virtual JsonSerializerSettings SetupJsonUploadSettingsSerialize()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+            };
+           
             return settings;
         }
 

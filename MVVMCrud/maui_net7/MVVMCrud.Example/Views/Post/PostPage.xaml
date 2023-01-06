@@ -22,16 +22,19 @@
         <controls:MVVMCrudRefreshView
             Grid.Row="1">
 
-            <controls:MVVMCrudCollectionView
-                ItemsSource="{Binding ItemsSource}">
+            <Grid>
+                <controls:MVVMCrudCollectionView>
 
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <viewsPost:PostCell/>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <viewsPost:PostCell/>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
 
-            </controls:MVVMCrudCollectionView>
+                </controls:MVVMCrudCollectionView>
+
+            </Grid>
+            
         </controls:MVVMCrudRefreshView>
 
     </Grid>

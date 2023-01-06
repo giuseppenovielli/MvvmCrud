@@ -1,12 +1,7 @@
 ﻿using System;
-<<<<<<<< HEAD:MVVMCrud/maui_net7/MVVMCrud/Views/Base/BaseContentPage.cs
-using Microsoft.Maui.Controls.PlatformConfiguration;
-using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
-========
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
->>>>>>>> xamarin_forms:MVVMCrud/xamarin_forms_5/MVVMCrud/Views/Base/BaseContentPage.cs
 
 namespace MVVMCrud.Views.Base
 {

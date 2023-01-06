@@ -4,6 +4,7 @@ using MVVMCrud.Services.Request;
 using MVVMCrud.Views;
 using Prism.Commands;
 using Prism.Navigation;
+using Xamarin.Forms;
 
 namespace MVVMCrud.ViewModels.Base
 {

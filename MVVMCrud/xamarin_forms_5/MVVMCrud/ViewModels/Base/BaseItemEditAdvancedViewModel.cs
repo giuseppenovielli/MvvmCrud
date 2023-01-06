@@ -9,6 +9,7 @@ using MVVMCrud.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Prism.Navigation;
+using Xamarin.Forms;
 
 namespace MVVMCrud.ViewModels.Base
 {

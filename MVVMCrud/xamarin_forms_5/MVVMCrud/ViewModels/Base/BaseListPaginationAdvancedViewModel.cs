@@ -11,6 +11,8 @@ using MVVMCrud.Services.Request;
 using MVVMCrud.Utils;
 using Newtonsoft.Json;
 using Prism.Navigation;
+using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace MVVMCrud.ViewModels.Base
 {

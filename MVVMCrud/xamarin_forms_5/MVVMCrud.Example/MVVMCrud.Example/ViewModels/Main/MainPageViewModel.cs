@@ -3,6 +3,7 @@ using MVVMCrud.Example.Views.Post;
 using MVVMCrud.Example.Views.PostListView;
 using MVVMCrud.ViewModels.Base;
 using Prism.Navigation;
+using Xamarin.Forms;
 
 namespace MVVMCrud.Example.ViewModels.Main
 {

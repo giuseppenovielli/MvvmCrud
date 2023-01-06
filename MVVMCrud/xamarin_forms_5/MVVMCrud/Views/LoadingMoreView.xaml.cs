@@ -1,4 +1,6 @@
-﻿namespace MVVMCrud.Views
+﻿using Xamarin.Forms;
+
+namespace MVVMCrud.Views
 {
     public partial class LoadingMoreView : ContentView
     {

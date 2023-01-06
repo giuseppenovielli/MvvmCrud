@@ -1,10 +1,7 @@
 ﻿using MVVMCrud;
 using MVVMCrud.ViewModels.Base;
 using Newtonsoft.Json;
-<<<<<<<< HEAD:MVVMCrud/maui_net7/MVVMCrud/Views/Base/BaseContentView.cs
-========
 using Xamarin.Forms;
->>>>>>>> xamarin_forms:MVVMCrud/xamarin_forms_5/MVVMCrud/Views/Base/BaseContentView.cs
 
 namespace MVVMCrud.Views.Base
 {

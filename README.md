@@ -10,6 +10,16 @@ https://www.nuget.org/packages/MvvmCrud.Forms.Prism
 ```
 Install-Package MvvmCrud.Forms.Prism -Version 0.0.1
 ```
+
+into App.xaml.cs add the foolowing code
+
+```
+protected override void RegisterTypes(IContainerRegistry containerRegistry)
+{
+    MVVMCrudApplication.RegisterServices(containerRegistry);
+}
+```
+
 Done!
 
 ## How it works

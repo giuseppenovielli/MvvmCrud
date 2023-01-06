@@ -56,29 +56,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\MVVMCrud\MVVMCrud.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <MauiXaml Update="Views\Post\PostCell.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Post\PostPage.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Comment\CommentPage.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Comment\CommentCell.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\PostNewEdit\PostNewEditPage.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\PostListView\PostListViewPage.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Main\MainPage.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	</ItemGroup>
+
 	<ItemGroup>
 	  <EmbeddedResource Update="AppResources.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
@@ -89,8 +67,5 @@
 	  <Compile Update="AppResources.Designer.cs">
 	    <DependentUpon>AppResources.resx</DependentUpon>
 	  </Compile>
-	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="CommunityToolkit.Maui" />
 	</ItemGroup>
 </Project>

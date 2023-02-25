@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
+using MVVMCrud.Controls;
 using MVVMCrud.CustomView;
 using MVVMCrud.Models.Base;
 using MVVMCrud.Models.ItemRoot;
@@ -41,6 +43,8 @@ namespace MVVMCrud.ViewModels.Base
         {
             base.Initialize(parameters);
 
+            SubscribeMessagingCenter();
+
             TitlePage = SetupTitlePage();
             Endpoint = SetupEndpoint();
 
@@ -49,10 +53,6 @@ namespace MVVMCrud.ViewModels.Base
             if (string.IsNullOrWhiteSpace(Id))
             {
                 _ = SetupGet();
-            }
-            else
-            {
-                ShowMessage(MVVMCrudApplication.GetLoadingText());
             }
 
         }
@@ -337,20 +337,23 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual async void SetupEditItem(TCellVM cellVM)
         {
-            var navParams = new NavigationParameters
+            var page = SetupCreateUpdatePage();
+            var navParams = SetupEditItemNavParams(cellVM);
+            var useModalNavigation = SetupCreateUpdatePageIsModal();
+
+            var navResult = await SetupNavigationPage(page, navParams, cellVM, useModalNavigation);
+        }
+
+        public virtual NavigationParameters SetupEditItemNavParams(TCellVM cellVM)
+        {
+            return new NavigationParameters
             {
                 { "endpoint", SetupCreateUpdatePageEndpoint() },
                 { "itemSerialized", SetupCreateUpdatePageItemSerialized(cellVM) },
                 { "position", ItemsList.IndexOf(cellVM) }
             };
-
-            var page = SetupCreateUpdatePage();
-            if (!string.IsNullOrWhiteSpace(page))
-            {
-                //var navResult = await NavigationService.NavigateAsync(page, navParams, useModalNavigation: SetupCreateUpdatePageIsModal());
-                var navResult = await NavigationService.NavigateAsync(page, navParams);
-            }
         }
+
 
         public virtual string SetupCreateUpdatePageItemSerialized(TCellVM cellVM)
         {
@@ -368,28 +371,47 @@ namespace MVVMCrud.ViewModels.Base
 
         public override async void TlbAddClick()
         {
+            //var result = await NavigationService.CreateBuilder()
+            //    .UseAbsoluteNavigation(SetupCreateUpdatePageIsModal())
+            //    .AddSegment(nameof(MVVMCrudModalNavigationPage))
+            //    .AddSegment(page, SetupCreateUpdatePageIsModal())
+            //    .WithParameters(navParams)
+            //    .NavigateAsync();
+
+            //if (SetupCreateUpdatePageIsModal())
+            //{
+            //    navParams.Add(KnownNavigationParameters.UseModalNavigation, true);
+            //}
+
+            var navParams = SetupCreateNavParams();
             var page = SetupCreateUpdatePage();
-            if (!string.IsNullOrWhiteSpace(page))
-            {
-                var navParams = new NavigationParameters
-                {
-                    { "endpoint", SetupCreateUpdatePageEndpoint() },
-                };
-
-                //var navResult = await NavigationService.NavigateAsync(page, navParams, useModalNavigation: SetupCreateUpdatePageIsModal());
-                var navResult = await NavigationService.NavigateAsync(page, navParams);
-
-            }
+            var useModalNavigation = SetupCreateUpdatePageIsModal();
+            var navResult = await SetupNavigationPage(page, navParams, useModalNavigation: useModalNavigation);
         }
 
-        public virtual string SetupCreateUpdatePageName()
+        public virtual NavigationParameters SetupCreateNavParams()
+        {
+            return new NavigationParameters
+            {
+                { "endpoint", SetupCreateUpdatePageEndpoint() },
+            };
+        }
+
+
+        public virtual async Task<object> SetupNavigationPage(string page, INavigationParameters navParams, TCellVM cellVM = null, bool useModalNavigation = false)
+        {
+            return await NavigationService.NavigateAsync(page, navParams);
+            //return await NavigationService.NavigateAsync(page, navParams, useModalNavigation: useModalNavigation);
+        }
+
+        public virtual string SetupCreateUpdatePageName(TCellVM cellVM = null)
         {
             return GetType().Name;
         }
 
-        public virtual string SetupCreateUpdatePage()
+        public virtual string SetupCreateUpdatePage(TCellVM cellVM = null)
         {
-            var pageVMName = SetupCreateUpdatePageName();
+            var pageVMName = SetupCreateUpdatePageName(cellVM);
 
             var pageContext = pageVMName.Split(new[] { "PageViewModel" }, StringSplitOptions.None);
             if (pageContext?.Length == 2)
@@ -400,14 +422,14 @@ namespace MVVMCrud.ViewModels.Base
 
                 return pageNewEdit;
 
-                if (!SetupCreateUpdatePageIsModal())
-                {
-                    return pageNewEdit;
-                }
-                else
-                {
-                    return string.Format("{0}/{1}", nameof(MVVMCrudModalNavigationPage), pageNewEdit);
-                }
+                //if (!SetupCreateUpdatePageIsModal(cellVM)
+                //{
+                //    return pageNewEdit;
+                //}
+                //else
+                //{
+                //    return string.Format("{0}/{1}", nameof(MVVMCrudModalNavigationPage), pageNewEdit);
+                //}
 
 
             }
@@ -415,7 +437,7 @@ namespace MVVMCrud.ViewModels.Base
             return null;
         }
 
-        public virtual bool SetupCreateUpdatePageIsModal()
+        public virtual bool SetupCreateUpdatePageIsModal(TCellVM cellVM = null)
         {
             if (DeviceInfo.Platform == DevicePlatform.iOS)
             {
@@ -530,11 +552,14 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual async void SetupDetailPage(TCellVM obj)
         {
-            var pageName = SetupDetailPageName(obj);
+            var navResult = await SetupNavigationPage(SetupDetailPageName(obj), SetupDetailPageNavParams(obj), obj, IsDetailPageModal(obj));
+        }
+
+        public virtual NavigationParameters SetupDetailPageNavParams(TCellVM obj)
+        {
             var withHeader = IsDetailPageWithHeader(obj);
             var id = SetupDetailPageID(obj);
-            var modal = IsDetailPageModal(obj);
-
+            
             var position = ItemsSource.IndexOf(obj);
             var fromPageName = GetType().Name;
 
@@ -554,19 +579,9 @@ namespace MVVMCrud.ViewModels.Base
                 navParams.Add("id", id);
             }
 
-            modal = false;
-            if (!modal)
-            {
-                var navResult = await NavigationService.NavigateAsync(pageName, navParams);
-            }
-            else
-            {
-                pageName = nameof(MVVMCrudModalNavigationPage) + "/" + pageName;
-                //var navResult = await NavigationService.NavigateAsync(pageName, navParams, useModalNavigation=modal);
-            }
-
-
+            return navParams;
         }
+
 
         public override void PerformSearch(string newText)
         {
@@ -627,58 +642,107 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual void SubscribeListViewItemAppearing()
         {
-            var message = string.Format("ListView_ItemAppearing {0}", _uuidMessagingCenter);
-            MessagingCenter.Subscribe<object, object>(this, message, (sender, args) =>
+            //var message = string.Format("ListView_ItemAppearing {0}", _uuidMessagingCenter);
+            //MessagingCenter.Subscribe<object, object>(this, message, (sender, args) =>
+            //{
+            //    if (
+            //        ItemsList != null
+            //        &&
+            //        ItemsList.Count > 0
+            //        &&
+            //        args == ItemsList[ItemsList.Count - 1]
+            //    )
+            //    {
+            //        ItemsThresholdReached();
+            //    }
+
+            //});
+
+            // Register a message in some module
+            WeakReferenceMessenger.Default.Register<ListViewItemAppearingChangeMessage>(this, (r, m) =>
             {
                 if (
-                    ItemsList != null
-                    &&
-                    ItemsList.Count > 0
-                    &&
-                    args == ItemsList[ItemsList.Count - 1]
-                )
+                        ItemsList != null
+                        &&
+                        ItemsList.Count > 0
+                        &&
+                        m?.Uuid == _uuidMessagingCenter
+                        &&
+                        m?.Value == ItemsList[ItemsList.Count - 1]
+                    )
                 {
                     ItemsThresholdReached();
                 }
-
             });
         }
 
         public virtual void SubscribeSearchBarFocused()
         {
-            var message = string.Format("SearchBar_Focused {0}", _uuidMessagingCenter);
-            MessagingCenter.Subscribe<object, bool>(this, message, (sender, isFocused) =>
+            //var message = string.Format("SearchBar_Focused {0}", _uuidMessagingCenter);
+            //MessagingCenter.Subscribe<object, bool>(this, message, (sender, isFocused) =>
+            //{
+            //    SearchBarFocused(isFocused);
+            //});
+
+            // Register a message in some module
+            WeakReferenceMessenger.Default.Register<SearchBarFocusedMessage>(this, (r, m) =>
             {
-                SearchBarFocused(isFocused);
+                if (
+                        m?.Value != null
+                        &&
+                        m?.Uuid == _uuidMessagingCenter
+                    )
+                {
+                    SearchBarFocused(m.Value);
+                }
+                
             });
         }
 
         public virtual void SubscribeScroolToAnimate()
         {
-            var message = string.Format("ListView_ScroolToItem_Animate_To_ViewModel {0}", _uuidMessagingCenter);
-            MessagingCenter.Subscribe<ContentView>(this, message, (sender) =>
+            //var message = string.Format("ListView_ScroolToItem_Animate_To_ViewModel {0}", _uuidMessagingCenter);
+            //MessagingCenter.Subscribe<ContentView>(this, message, (sender) =>
+            //{
+            //    ScroolToAnimate(sender);
+            //});
+
+            WeakReferenceMessenger.Default.Register<ListViewScroolToItemAnimateToViewModelMessage>(this, (r, m) =>
             {
-                ScroolToAnimate(sender);
+                if (
+                        m?.Value != null
+                        &&
+                        m?.Uuid == _uuidMessagingCenter
+                    )
+                {
+                    ScroolToAnimate(m.Value);
+                }
             });
 
         }
 
         public virtual void UnsubscribeListViewItemAppearing()
         {
-            var message = string.Format("ListView_ItemAppearing {0}", _uuidMessagingCenter);
-            MessagingCenter.Unsubscribe<object, object>(this, message);
+            //var message = string.Format("ListView_ItemAppearing {0}", _uuidMessagingCenter);
+            //MessagingCenter.Unsubscribe<object, object>(this, message);
+
+            WeakReferenceMessenger.Default.Unregister<ListViewItemAppearingChangeMessage>(this);
         }
 
         public virtual void UnsubscribeSearchBarFocused()
         {
-            var message = string.Format("SearchBar_Focused {0}", _uuidMessagingCenter);
-            MessagingCenter.Unsubscribe<object, bool>(this, message);
+            //var message = string.Format("SearchBar_Focused {0}", _uuidMessagingCenter);
+            //MessagingCenter.Unsubscribe<object, bool>(this, message);
+
+            WeakReferenceMessenger.Default.Unregister<SearchBarFocusedMessage>(this);
         }
 
         public virtual void UnsubscribeScroolToAnimate()
         {
-            var message = string.Format("ListView_ScroolToItem_Animate_To_ViewModel {0}", _uuidMessagingCenter);
-            MessagingCenter.Unsubscribe<ContentView, object>(this, message);
+            //var message = string.Format("ListView_ScroolToItem_Animate_To_ViewModel {0}", _uuidMessagingCenter);
+            //MessagingCenter.Unsubscribe<ContentView, object>(this, message);
+
+            WeakReferenceMessenger.Default.Unregister<ListViewScroolToItemAnimateToViewModelMessage>(this);
         }
 
         public virtual void SubscribeMessagingCenter()
@@ -711,32 +775,30 @@ namespace MVVMCrud.ViewModels.Base
         {
             base.OnNavigatedTo(parameters);
 
-            SubscribeMessagingCenter();
-
-            if (parameters.ContainsKey("newEditItem"))
+            if (parameters.ContainsKey("deleteItem"))
             {
-                var newEditItem = parameters["newEditItem"] as NewEditItem<TItem>;
-                if (newEditItem != null)
-                {
-                    var pos = newEditItem.Position;
-                    if (pos == -1)
-                    {
-                        //New
-                        AddNewItem(newEditItem.Item);
-                    }
-                    else
-                    {
-                        //Edit
-                        UpdateEditItem(newEditItem);
-                    }
-                }
+                var pos = parameters.GetValue<int>("deleteItem");
+                SetupDeleteItem(pos);
             }
             else
             {
-                if (parameters.ContainsKey("deleteItem"))
+                if (parameters.ContainsKey("newEditItem"))
                 {
-                    var pos = parameters.GetValue<int>("deleteItem");
-                    SetupDeleteItem(pos);
+                    var newEditItem = parameters["newEditItem"] as NewEditItem<TItem>;
+                    if (newEditItem != null)
+                    {
+                        var pos = newEditItem.Position;
+                        if (pos == -1)
+                        {
+                            //New
+                            AddNewItem(newEditItem.Item);
+                        }
+                        else
+                        {
+                            //Edit
+                            UpdateEditItem(newEditItem);
+                        }
+                    }
                 }
             }
         }
@@ -745,7 +807,11 @@ namespace MVVMCrud.ViewModels.Base
         {
             base.OnNavigatedFrom(parameters);
 
-            UnsubscribeMessagingCenter();
+            if (parameters.GetNavigationMode() == Prism.Navigation.NavigationMode.Back)
+            {
+                UnsubscribeMessagingCenter();
+            }
+            
         }
 
         public virtual int AddNewItemPosition() => 0;
@@ -794,8 +860,11 @@ namespace MVVMCrud.ViewModels.Base
                 Item = listObj
             };
 
-            var message = string.Format("ListView_OnScrool {0}", _uuidMessagingCenter);
-            MessagingCenter.Send(this as object, message, scroolToItem);
+            //var message = string.Format("ListView_OnScrool {0}", _uuidMessagingCenter);
+            //MessagingCenter.Send(this as object, message, scroolToItem);
+
+            // Send a message from some other module
+            WeakReferenceMessenger.Default.Send(new ListViewScroolToMessage(_uuidMessagingCenter, scroolToItem));
         }
 
         public virtual bool ScroolToAnimateIsEnable()

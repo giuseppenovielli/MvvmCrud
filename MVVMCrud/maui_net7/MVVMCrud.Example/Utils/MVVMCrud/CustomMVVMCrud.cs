@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Security;
+using System.Resources;
 using System.Security.Cryptography.X509Certificates;
 using MVVMCrud.Models.ItemRoot;
 using MVVMCrud.Utils;
@@ -15,10 +16,11 @@ namespace MVVMCrud.Example.Utils.MVVMCrud
     {
         public CustomMVVMCrud()
         {
-            AppResourceManager = AppResources.ResourceManager;
         }
 
         public override BaseRequestSetupResponse SetupBaseRequestSetupResponse() => new CustomBaseRequestSetupResponse();
+
+        public override ResourceManager SetupAppResourceManager() => AppResources.ResourceManager;
 
         public override HttpClient SetupHttpClient()
         {
@@ -34,12 +36,13 @@ namespace MVVMCrud.Example.Utils.MVVMCrud
             return client;
         }
 
-    private bool CheckSSLConnection(HttpRequestMessage arg1, X509Certificate2 arg2, X509Chain arg3, SslPolicyErrors arg4)
-    {
-        return true;
-    }
+        private bool CheckSSLConnection(HttpRequestMessage arg1, X509Certificate2 arg2, X509Chain arg3, SslPolicyErrors arg4)
+        {
+            return true;
+        }
 
-    public override void SetupRootItemBase(RootItemBase rootItemBase)
+
+        public override void SetupRootItemBase(RootItemBase rootItemBase)
         {
             var httpCode = rootItemBase.HttpResponseCode;
 

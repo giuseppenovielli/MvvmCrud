@@ -209,7 +209,7 @@ namespace MVVMCrud.Models.Base
 
             if (!RootItemBase.IsError)
             {
-                var itemsArray = item.GetValue(MVVMCrudApplication.PAGINATION_RESULT_NAME).ToObject<JArray>();
+                var itemsArray = item.GetValue(MVVMCrudApplication.GetResultKeyJSON()).ToObject<JArray>();
                 PaginationItem = new PaginationItem(response, responseHeader);
 
                 OnDataArray(itemsArray);
@@ -236,7 +236,7 @@ namespace MVVMCrud.Models.Base
 
             if (!RootItemBase.IsError)
             {
-                var itemsArray = item.GetValue(MVVMCrudApplication.PAGINATION_RESULT_NAME).ToObject<JArray>();
+                var itemsArray = item.GetValue(MVVMCrudApplication.GetResultKeyJSON()).ToObject<JArray>();
                 PaginationItem = new PaginationItem(response, responseHeader);
 
                 OnDataObject(item);
@@ -252,7 +252,7 @@ namespace MVVMCrud.Models.Base
 
             if (!RootItemBase.IsError)
             {
-                var itemsArray = item.GetValue(MVVMCrudApplication.RESULT_LIST).ToObject<JArray>();
+                var itemsArray = item.GetValue(MVVMCrudApplication.GetResultKeyJSON()).ToObject<JArray>();
 
                 OnDataObject(item);
                 OnDataArray(itemsArray);

@@ -33,6 +33,15 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
 	  <CreatePackage>false</CreatePackage>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-ios|AnyCPU'">
+	  <CreatePackage>false</CreatePackage>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-maccatalyst|AnyCPU'">
+	  <CreatePackage>false</CreatePackage>
+	  <CodesignKey>Mac Developer</CodesignKey>
+	  <PackageSigningKey>3rd Party Mac Developer Installer</PackageSigningKey>
+	  <EnableCodeSigning>False</EnableCodeSigning>
+	</PropertyGroup>
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
@@ -50,35 +59,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-		<PackageReference Include="CommunityToolkit.Maui" Version="3.1.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\MVVMCrud\MVVMCrud.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-	  <MauiXaml Update="Views\Post\PostCell.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Post\PostPage.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Comment\CommentPage.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Comment\CommentCell.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\PostNewEdit\PostNewEditPage.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\PostListView\PostListViewPage.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Main\MainPage.xaml">
-	    <SubType></SubType>
-	  </MauiXaml>
-	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Update="AppResources.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
@@ -91,6 +73,9 @@
 	  </Compile>
 	</ItemGroup>
 	<ItemGroup>
-	  <None Remove="CommunityToolkit.Maui" />
+	  <None Remove="MvvmCrud.Maui.Prism" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\MVVMCrud\MVVMCrud.csproj" />
 	</ItemGroup>
 </Project>

@@ -36,12 +36,13 @@ namespace MVVMCrud.Example.Utils.MVVMCrud
             return client;
         }
 
-    private bool CheckSSLConnection(HttpRequestMessage arg1, X509Certificate2 arg2, X509Chain arg3, SslPolicyErrors arg4)
-    {
-        return true;
-    }
+        private bool CheckSSLConnection(HttpRequestMessage arg1, X509Certificate2 arg2, X509Chain arg3, SslPolicyErrors arg4)
+        {
+            return true;
+        }
 
-    public override void SetupRootItemBase(RootItemBase rootItemBase)
+
+        public override void SetupRootItemBase(RootItemBase rootItemBase)
         {
             var httpCode = rootItemBase.HttpResponseCode;
 

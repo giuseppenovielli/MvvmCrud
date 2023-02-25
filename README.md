@@ -1,7 +1,10 @@
 # MvvmCrud
 MvvmCrud helps your Xamarin.Forms/MAUI app with Prism Library to standardize operations of creating, updating, deletion and display data, from REST API.
 
-![image info](https://img.shields.io/nuget/v/MvvmCrud.Forms.Prism)
+|                 | Preview                                                                                                                                                                                                                                                                                                                                                | Stable |
+|-----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
+| Xamarin.Forms_5 | [![NuGet version (MvvmCrud.Forms.Prism)](https://img.shields.io/nuget/v/MvvmCrud.Forms.Prism.svg?style=flat-square)](https://www.nuget.org/packages/MvvmCrud.Forms.Prism/) [![NuGet version (MvvmCrud.Forms.Prism)](https://img.shields.io/nuget/dt/MvvmCrud.Forms.Prism.svg?style=flat-square)](https://www.nuget.org/packages/MvvmCrud.Forms.Prism/) |        |
+| MAUI_NET7       | [![NuGet version (MvvmCrud.Maui.Prism)](https://img.shields.io/nuget/v/MvvmCrud.Maui.Prism.svg?style=flat-square)](https://www.nuget.org/packages/MvvmCrud.Maui.Prism/) [![NuGet version (MvvmCrud.Maui.Prism)](https://img.shields.io/nuget/dt/MvvmCrud.Maui.Prism.svg?style=flat-square)](https://www.nuget.org/packages/MvvmCrud.Maui.Prism/)       |        |
 
 ## How it works
 
@@ -34,10 +37,7 @@ namespace MVVMCrud.Example.ViewModels.Post
         {
         }
 
-        public override string SetupEndpoint()
-        {
-            return Constants.Constants.METHOD_POST;
-        }
+        public override string SetupEndpoint() => Constants.Constants.METHOD_POST;
 
         public override async void AddNewItem(PostItem item)
         {

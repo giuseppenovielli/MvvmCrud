@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Hosting;
 using MVVMCrud.Example.Utils.MVVMCrud;
 using Prism.Navigation;
@@ -22,7 +21,6 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
         .UseMauiApp<App>()
-        .UseMauiCommunityToolkit()
         .UsePrism(prism =>
 
             prism.RegisterTypes(containerRegistry =>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using MVVMCrud.Models.RequestResponse;
 
@@ -273,11 +274,21 @@ namespace MVVMCrud.Services.RequestProvider
 
         }
 
-        public async Task<RequestResponseItem> PutAsync(string apiUrl, HttpContent data = null, HttpClient httpClient = null)
+        public async Task<RequestResponseItem> PutAsync(string apiUrl, HttpContent data = null, HttpClient httpClient = null, bool partialUpdate = false)
         {
-            System.Diagnostics.Debug.WriteLine("\nMVVMCrud PutAsync");
+
+
+            System.Diagnostics.Debug.WriteLine("\nPutAsync");
             System.Diagnostics.Debug.WriteLine("PutAsync apiUrl = " + apiUrl);
-            System.Diagnostics.Debug.WriteLine("PutAsync data = " + data);
+            System.Diagnostics.Debug.WriteLine("PutAsync partialUpdate = " + partialUpdate);
+
+            if (data != null)
+            {
+                System.Diagnostics.Debug.WriteLine("PutAsync data = " + await data?.ReadAsStringAsync());
+            }
+
+            System.Diagnostics.Debug.WriteLine("PutAsync HttpClient = " + httpClient);
+
 
             RequestResponseItem responseItem = null;
 
@@ -289,11 +300,25 @@ namespace MVVMCrud.Services.RequestProvider
 
                 try
                 {
-                    var response = await client.PutAsync(apiUrl, data);
+                    HttpResponseMessage response = null;
 
-                    string json = await response.Content.ReadAsStringAsync();
+                    if (!partialUpdate)
+                    {
+                        response = await client.PutAsync(apiUrl, data);
+                    }
+                    else
+                    {
+                        //https://stackoverflow.com/questions/47463000/c-sharp-xamarin-forms-add-custom-header-patch
+                        var method = new HttpMethod("PATCH");
+                        var request = new HttpRequestMessage(method, apiUrl)
+                        {
+                            Content = data
+                        };
+                        response = await client.SendAsync(request);
+                    }
+
+                    var json = await response.Content.ReadAsStringAsync();
                     var responseStatus = response.StatusCode;
-
                     responseItem = new RequestResponseItem(responseStatus, json, response.Headers);
 
 
@@ -302,8 +327,6 @@ namespace MVVMCrud.Services.RequestProvider
                 }
                 catch (Exception e)
                 {
-
-
                     System.Diagnostics.Debug.WriteLine("PutAsync Exception = " + e.ToString());
                     System.Diagnostics.Debug.WriteLine("httpcode = null");
                     System.Diagnostics.Debug.WriteLine("response = " + e.ToString());
@@ -317,7 +340,6 @@ namespace MVVMCrud.Services.RequestProvider
             return responseItem;
 
         }
-
         public async Task<RequestResponseItem> GetByteArray(string apiUrl, HttpClient httpClient = null, bool header = true)
         {
             System.Diagnostics.Debug.WriteLine("\nMVVMCrud GetByteArray");

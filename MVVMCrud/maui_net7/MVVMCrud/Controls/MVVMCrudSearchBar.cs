@@ -1,5 +1,7 @@
 ﻿
 
+using CommunityToolkit.Mvvm.Messaging;
+
 namespace MVVMCrud.Controls
 {
     public class MVVMCrudSearchBar : SearchBar
@@ -14,9 +16,19 @@ namespace MVVMCrud.Controls
 
             Focused += (object sender, FocusEventArgs e) =>
             {
-              var message = string.Format("SearchBar_Focused {0}", uuid);
-              MessagingCenter.Send(this as object, message, e.IsFocused);
+                //var message = string.Format("SearchBar_Focused {0}", uuid);
+                //MessagingCenter.Send(this as object, message, e.IsFocused);
+
+                // Send a message from some other module
+                WeakReferenceMessenger.Default.Send(new SearchBarFocusedMessage(uuid, e.IsFocused));
             };
+        }
+    }
+
+    public class SearchBarFocusedMessage : GenericUUIDChangeMessage<bool>
+    {
+        public SearchBarFocusedMessage(string uuid, bool isFocused) : base(uuid, isFocused)
+        {
         }
     }
 }

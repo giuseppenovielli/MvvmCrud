@@ -33,6 +33,15 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
 	  <CreatePackage>false</CreatePackage>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-ios|AnyCPU'">
+	  <CreatePackage>false</CreatePackage>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-maccatalyst|AnyCPU'">
+	  <CreatePackage>false</CreatePackage>
+	  <CodesignKey>Mac Developer</CodesignKey>
+	  <PackageSigningKey>3rd Party Mac Developer Installer</PackageSigningKey>
+	  <EnableCodeSigning>False</EnableCodeSigning>
+	</PropertyGroup>
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
@@ -50,11 +59,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-		<PackageReference Include="CommunityToolkit.Maui" Version="3.1.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\MVVMCrud\MVVMCrud.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -67,5 +71,11 @@
 	  <Compile Update="AppResources.Designer.cs">
 	    <DependentUpon>AppResources.resx</DependentUpon>
 	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="MvvmCrud.Maui.Prism" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\MVVMCrud\MVVMCrud.csproj" />
 	</ItemGroup>
 </Project>

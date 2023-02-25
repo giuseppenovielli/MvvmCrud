@@ -34,10 +34,7 @@ namespace MVVMCrud.Example.ViewModels.Post
         {
         }
 
-        public override string SetupEndpoint()
-        {
-            return Constants.Constants.METHOD_POST;
-        }
+        public override string SetupEndpoint() => Constants.Constants.METHOD_POST;
 
         public override async void AddNewItem(PostItem item)
         {

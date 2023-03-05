@@ -43,6 +43,8 @@ namespace MVVMCrud.ViewModels.Base
         {
             base.Initialize(parameters);
 
+            SubscribeMessagingCenter();
+
             TitlePage = SetupTitlePage();
             Endpoint = SetupEndpoint();
 
@@ -51,10 +53,6 @@ namespace MVVMCrud.ViewModels.Base
             if (string.IsNullOrWhiteSpace(Id))
             {
                 _ = SetupGet();
-            }
-            else
-            {
-                ShowMessage(MVVMCrudApplication.GetLoadingText());
             }
 
         }
@@ -339,19 +337,21 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual async void SetupEditItem(TCellVM cellVM)
         {
-            var navParams = new NavigationParameters
+            var page = SetupCreateUpdatePage(cellVM);
+            var navParams = SetupEditItemNavParams(cellVM);
+            var useModalNavigation = SetupCreateUpdatePageIsModal(cellVM);
+
+            var navResult = await SetupNavigationPage(page, navParams, cellVM, useModalNavigation);
+        }
+
+        public virtual NavigationParameters SetupEditItemNavParams(TCellVM cellVM)
+        {
+            return new NavigationParameters
             {
                 { "endpoint", SetupCreateUpdatePageEndpoint() },
                 { "itemSerialized", SetupCreateUpdatePageItemSerialized(cellVM) },
                 { "position", ItemsList.IndexOf(cellVM) }
             };
-
-            var page = SetupCreateUpdatePage();
-            if (!string.IsNullOrWhiteSpace(page))
-            {
-                //var navResult = await NavigationService.NavigateAsync(page, navParams, useModalNavigation: SetupCreateUpdatePageIsModal());
-                var navResult = await NavigationService.NavigateAsync(page, navParams);
-            }
         }
 
         public virtual string SetupCreateUpdatePageItemSerialized(TCellVM cellVM)
@@ -370,28 +370,34 @@ namespace MVVMCrud.ViewModels.Base
 
         public override async void TlbAddClick()
         {
+            var navParams = SetupCreateNavParams();
             var page = SetupCreateUpdatePage();
-            if (!string.IsNullOrWhiteSpace(page))
-            {
-                var navParams = new NavigationParameters
-                {
-                    { "endpoint", SetupCreateUpdatePageEndpoint() },
-                };
-
-                //var navResult = await NavigationService.NavigateAsync(page, navParams, useModalNavigation: SetupCreateUpdatePageIsModal());
-                var navResult = await NavigationService.NavigateAsync(page, navParams);
-
-            }
+            var useModalNavigation = SetupCreateUpdatePageIsModal();
+            var navResult = await SetupNavigationPage(page, navParams, useModalNavigation: useModalNavigation);
         }
 
-        public virtual string SetupCreateUpdatePageName()
+        public virtual NavigationParameters SetupCreateNavParams()
+        {
+            return new NavigationParameters
+            {
+                { "endpoint", SetupCreateUpdatePageEndpoint() },
+            };
+        }
+
+
+        public virtual async Task<object> SetupNavigationPage(string page, INavigationParameters navParams, TCellVM cellVM = null, bool useModalNavigation = false)
+        {
+            return await NavigationService.NavigateAsync(page, navParams, useModalNavigation: useModalNavigation);
+        }
+
+        public virtual string SetupCreateUpdatePageName(TCellVM cellVM = null)
         {
             return GetType().Name;
         }
 
-        public virtual string SetupCreateUpdatePage()
+        public virtual string SetupCreateUpdatePage(TCellVM cellVM = null)
         {
-            var pageVMName = SetupCreateUpdatePageName();
+            var pageVMName = SetupCreateUpdatePageName(cellVM);
 
             var pageContext = pageVMName.Split(new[] { "PageViewModel" }, StringSplitOptions.None);
             if (pageContext?.Length == 2)
@@ -399,8 +405,6 @@ namespace MVVMCrud.ViewModels.Base
                 var pageName = pageContext[0];
 
                 var pageNewEdit = pageName + "NewEditPage";
-
-                return pageNewEdit;
 
                 if (!SetupCreateUpdatePageIsModal())
                 {
@@ -417,7 +421,7 @@ namespace MVVMCrud.ViewModels.Base
             return null;
         }
 
-        public virtual bool SetupCreateUpdatePageIsModal()
+        public virtual bool SetupCreateUpdatePageIsModal(TCellVM cellVM = null)
         {
             if (DeviceInfo.Platform == DevicePlatform.iOS)
             {
@@ -532,11 +536,14 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual async void SetupDetailPage(TCellVM obj)
         {
-            var pageName = SetupDetailPageName(obj);
+            var navResult = await SetupNavigationPage(SetupDetailPageName(obj), SetupDetailPageNavParams(obj), obj, IsDetailPageModal(obj));
+        }
+
+        public virtual NavigationParameters SetupDetailPageNavParams(TCellVM obj)
+        {
             var withHeader = IsDetailPageWithHeader(obj);
             var id = SetupDetailPageID(obj);
-            var modal = IsDetailPageModal(obj);
-
+            
             var position = ItemsSource.IndexOf(obj);
             var fromPageName = GetType().Name;
 
@@ -556,19 +563,9 @@ namespace MVVMCrud.ViewModels.Base
                 navParams.Add("id", id);
             }
 
-            modal = false;
-            if (!modal)
-            {
-                var navResult = await NavigationService.NavigateAsync(pageName, navParams);
-            }
-            else
-            {
-                pageName = nameof(MVVMCrudModalNavigationPage) + "/" + pageName;
-                //var navResult = await NavigationService.NavigateAsync(pageName, navParams, useModalNavigation=modal);
-            }
-
-
+            return navParams;
         }
+
 
         public override void PerformSearch(string newText)
         {
@@ -713,32 +710,30 @@ namespace MVVMCrud.ViewModels.Base
         {
             base.OnNavigatedTo(parameters);
 
-            SubscribeMessagingCenter();
-
-            if (parameters.ContainsKey("newEditItem"))
+            if (parameters.ContainsKey("deleteItem"))
             {
-                var newEditItem = parameters["newEditItem"] as NewEditItem<TItem>;
-                if (newEditItem != null)
-                {
-                    var pos = newEditItem.Position;
-                    if (pos == -1)
-                    {
-                        //New
-                        AddNewItem(newEditItem.Item);
-                    }
-                    else
-                    {
-                        //Edit
-                        UpdateEditItem(newEditItem);
-                    }
-                }
+                var pos = parameters.GetValue<int>("deleteItem");
+                SetupDeleteItem(pos);
             }
             else
             {
-                if (parameters.ContainsKey("deleteItem"))
+                if (parameters.ContainsKey("newEditItem"))
                 {
-                    var pos = parameters.GetValue<int>("deleteItem");
-                    SetupDeleteItem(pos);
+                    var newEditItem = parameters["newEditItem"] as NewEditItem<TItem>;
+                    if (newEditItem != null)
+                    {
+                        var pos = newEditItem.Position;
+                        if (pos == -1)
+                        {
+                            //New
+                            AddNewItem(newEditItem.Item);
+                        }
+                        else
+                        {
+                            //Edit
+                            UpdateEditItem(newEditItem);
+                        }
+                    }
                 }
             }
         }
@@ -747,7 +742,11 @@ namespace MVVMCrud.ViewModels.Base
         {
             base.OnNavigatedFrom(parameters);
 
-            UnsubscribeMessagingCenter();
+            if (parameters.GetNavigationMode() == Prism.Navigation.NavigationMode.Back)
+            {
+                UnsubscribeMessagingCenter();
+            }
+            
         }
 
         public virtual int AddNewItemPosition() => 0;

@@ -18,25 +18,5 @@ namespace MVVMCrud.Views.Base
 
             SetBinding(TitleProperty, new Binding() { Path = "TitlePage" });
         }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-
-            MessagingCenter.Send(this as ContentPage, "Page_OnAppearing");
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            MVVMCrudApplication.Instance?.IdMessagingCenterActiveList.Remove(_uuid);
-
-            MessagingCenter.Send(this as ContentPage, "Page_OnDisappearing");
-
-            System.Diagnostics.Debug.WriteLine("disappearing");
-
-            
-        }
     }
 }

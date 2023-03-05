@@ -333,14 +333,25 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual async void SetupReturnItem(TItem item)
         {
-            var navParams = new NavigationParameters
-            {
-                { "newEditItem", new NewEditItem<TItem>(item, Position, Section) }
-            };
+            var navParams = SetupReturnItemParams(item);
 
-            var navResult = await NavigationService.GoBackAsync(parameters: navParams);
+            var navResult = await SetupReturnNavigation(navParams, item);
         }
 
+        public virtual async Task<object> SetupReturnNavigation(NavigationParameters navParams, TItem item)
+        {
+            return await NavigationService.GoBackAsync(parameters: navParams);
+        }
+
+        public virtual NewEditItem<TItem> SetupReturnItemRawParams(TItem item) => new NewEditItem<TItem>(item, Position, Section);
+
+        public virtual NavigationParameters SetupReturnItemParams(TItem item)
+        {
+            return new NavigationParameters
+            {
+                { "newEditItem", SetupReturnItemRawParams(item) }
+            };
+        }
     }
 
     public class NewEditItem<TItem>

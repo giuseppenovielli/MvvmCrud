@@ -20,8 +20,7 @@ namespace MVVMCrud
 {
     public class MVVMCrudApplication
     {
-        public const string PAGINATION_RESULT_NAME = "results";
-        public const string RESULT_LIST = "results";
+        public string RESULT_LIST { get; set; }
 
         #region EmptyView
         public ContentView EmptyView { get; set; }
@@ -32,7 +31,7 @@ namespace MVVMCrud
         #endregion
 
         #region AppResource Host App
-        public ResourceManager AppResourceManager { get; set; }
+        public ResourceManager AppResourceManager { get; }
         #endregion
 
         #region Message resources
@@ -68,8 +67,12 @@ namespace MVVMCrud
 
             IdMessagingCenterActiveList = new List<string>();
 
+            AppResourceManager = SetupAppResourceManager();
+            RESULT_LIST = SetupResultKeyJSON();
             HttpClient = SetupHttpClient();
         }
+
+        public virtual ResourceManager SetupAppResourceManager() => AppResources.ResourceManager;
 
         public virtual HttpClient SetupHttpClient() => new HttpClient();
 
@@ -97,6 +100,8 @@ namespace MVVMCrud
         public static ContentView GetLoadingMoreView() => Instance?.LoadingMoreView != null ? Instance.LoadingMoreView : new LoadingMoreView();
         public static ResourceManager GetAppResourceManager() => Instance?.AppResourceManager != null ? Instance.AppResourceManager : AppResources.ResourceManager;
 
+        public static string GetResultKeyJSON() => Instance?.RESULT_LIST != null ? "results" : Instance.SetupResultKeyJSON();
+
         public virtual BaseRequestSetupResponse SetupBaseRequestSetupResponse() => new BaseRequestSetupResponse();
 
 
@@ -109,9 +114,12 @@ namespace MVVMCrud
             return l;
 
         }
-        public virtual void SetupPaginationItem(string item, HttpResponseHeaders responseHeader, PaginationItem paginationItem) { }
 
-        public virtual void SetupRootItemBase(RootItemBase rootItemBase) { }
+        public virtual string SetupResultKeyJSON() => "results";
+
+        public virtual void SetupPaginationItem(string item, HttpResponseHeaders responseHeader, PaginationItem paginationItem){}
+
+        public virtual void SetupRootItemBase(RootItemBase rootItemBase){}
 
         public virtual void SetupPaginationRequest(RootItemBase rootItemBase) { }
 
@@ -162,7 +170,7 @@ namespace MVVMCrud
             {
                 NullValueHandling = NullValueHandling.Ignore,
             };
-
+           
             return settings;
         }
 

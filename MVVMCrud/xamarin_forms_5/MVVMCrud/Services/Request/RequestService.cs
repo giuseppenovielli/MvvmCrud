@@ -221,7 +221,8 @@ namespace MVVMCrud.Services.Request
             bool getIfError = false,
             bool showLoading = true,
             List<HttpStatusCode> httpStatusCodes = null,
-            Action setupItem = null)
+            Action setupItem = null,
+            bool partialUpdate = false)
 
             where TItemRoot : BaseModelItemRoot<TItem>, new()
             where TItem : BaseItem, new()
@@ -237,7 +238,7 @@ namespace MVVMCrud.Services.Request
             return await RequestItem<TItemRoot, TItem>(
                 async () =>
                 {
-                    return await CreateUpdate<TItemRoot, TItem>(url, pk, formDataContent, httpContent, httpClient);
+                    return await CreateUpdate<TItemRoot, TItem>(url, pk, formDataContent, httpContent, httpClient, partialUpdate);
                 }, title, getIfError, showLoading, httpCodes, setupItem);
         }
 
@@ -377,7 +378,8 @@ namespace MVVMCrud.Services.Request
             string pk = null,
             MultipartFormDataContent formData = null,
             HttpContent httpContent = null,
-            HttpClient httpClient = null)
+            HttpClient httpClient = null,
+            bool partialUpdate = false)
 
             where TItemRoot : BaseModelItemRoot<TItem>, new()
             where TItem : BaseItem, new()
@@ -405,7 +407,7 @@ namespace MVVMCrud.Services.Request
             }
             else
             {
-                respondData = await _requestProvider.PutAsync(apiUrl, formData, httpClient);
+                respondData = await _requestProvider.PutAsync(apiUrl, formData, httpClient, partialUpdate);
             }
 
 

@@ -87,7 +87,8 @@ namespace MVVMCrud.Services.Request
             bool getIfError = false,
             bool showLoading = true,
             List<HttpStatusCode> httpStatusCodes = null,
-            Action setupItem = null)
+            Action setupItem = null,
+            bool partialUpdate = false)
 
             where TItemRoot : BaseModelItemRoot<TItem>, new()
             where TItem : BaseItem, new();
@@ -140,7 +141,8 @@ namespace MVVMCrud.Services.Request
             string pk = null,
             MultipartFormDataContent formData = null,
             HttpContent httpContent = null,
-            HttpClient httpClient = null)
+            HttpClient httpClient = null,
+            bool partialUpdate = false)
 
             where TItemRoot : BaseModelItemRoot<TItem>, new()
             where TItem : BaseItem, new();

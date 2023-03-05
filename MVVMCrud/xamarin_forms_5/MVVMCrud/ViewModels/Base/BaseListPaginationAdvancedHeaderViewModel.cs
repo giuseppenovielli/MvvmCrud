@@ -221,30 +221,41 @@ namespace MVVMCrud.ViewModels.Base
 
         public virtual async void SetupHeaderEditItem(THeaderCellVM cellVM)
         {
-            var navParams = new NavigationParameters
+            var page = SetupHeaderCreateUpdatePage(cellVM);
+            var navParams = SetupHeaderEditItemNavParams(cellVM);
+            var useModalNavigation = SetupHeaderCreateUpdatePageIsModal(cellVM);
+
+            var navResult = await SetupHeaderNavigationPage(page, navParams, cellVM, useModalNavigation);
+        }
+
+        public virtual bool SetupHeaderCreateUpdatePageIsModal(THeaderCellVM cellVM)
+        {
+            return base.SetupCreateUpdatePageIsModal();
+        }
+
+        public virtual async Task<object> SetupHeaderNavigationPage(string page, INavigationParameters navParams, THeaderCellVM cellVM = null, bool useModalNavigation = false)
+        {
+            return await NavigationService.NavigateAsync(page, navParams, useModalNavigation: useModalNavigation);
+        }
+
+        public virtual string SetupHeaderCreateUpdatePageName(THeaderCellVM cellVM)
+        {
+            return FromPagelViewModelName;
+        }
+
+        public virtual NavigationParameters SetupHeaderEditItemNavParams(THeaderCellVM cellVM)
+        {
+            return new NavigationParameters
             {
                 { "position", HeaderPosition },
                 { "endpoint", HeaderEndpoint },
                 { "itemSerialized", SetupHeaderCreateUpdatePageItemSerialized(cellVM) },
             };
-
-            var page = SetupHeaderCreateUpdatePage();
-            if (!string.IsNullOrWhiteSpace(page))
-            {
-                //var navResult = await NavigationService.NavigateAsync(page, navParams, useModalNavigation: SetupCreateUpdatePageIsModal());
-                var navResult = await NavigationService.NavigateAsync(page, navParams);
-            }
-
         }
 
-        public virtual string SetupHeaderCreateUpdatePageName()
+        public virtual string SetupHeaderCreateUpdatePage(THeaderCellVM cellVM)
         {
-            return FromPagelViewModelName;
-        }
-
-        public virtual string SetupHeaderCreateUpdatePage()
-        {
-            var pageVMName = SetupHeaderCreateUpdatePageName();
+            var pageVMName = SetupHeaderCreateUpdatePageName(cellVM);
 
             var pageContext = pageVMName.Split(new[] { "PageViewModel" }, StringSplitOptions.None);
             if (pageContext?.Length == 2)
@@ -252,8 +263,6 @@ namespace MVVMCrud.ViewModels.Base
                 var pageName = pageContext[0];
 
                 var pageNewEdit = pageName + "NewEditPage";
-
-                return pageNewEdit;
 
                 if (!SetupCreateUpdatePageIsModal())
                 {

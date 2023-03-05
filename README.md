@@ -67,7 +67,7 @@ namespace MVVMCrud.Example.ViewModels.Post
 ## Docs
 
 - Clone this repository and check app's example. App's example use the follow endpoint https://jsonplaceholder.typicode.com/ to test functionality.
-- Go to [Wiki](https://github.com/giuseppenovielli/MvvmCrud/wiki) page.
+- Go to [Wiki](https://github.com/giuseppenovielli/MvvmCrud/wiki) page. (Under construction)
 
 ## Feedback or Requests
 Use GitHub [Issues](https://github.com/giuseppenovielli/MvvmCrud/issues) for bug reports and feature requests.

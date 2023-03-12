@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2545" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.7.4" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.5" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
     <PackageReference Include="Prism.DryIoc.Forms" Version="8.1.97" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
@@ -28,6 +28,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="MvvmCrud.Forms.Prism" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MVVMCrud\MVVMCrud.csproj" />

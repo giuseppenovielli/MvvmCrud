@@ -6,6 +6,14 @@ MvvmCrud helps your Xamarin.Forms/MAUI app with Prism Library to standardize ope
 | Xamarin.Forms_5 | [![NuGet version (MvvmCrud.Forms.Prism)](https://img.shields.io/nuget/v/MvvmCrud.Forms.Prism.svg?style=flat-square)](https://www.nuget.org/packages/MvvmCrud.Forms.Prism/) [![NuGet version (MvvmCrud.Forms.Prism)](https://img.shields.io/nuget/dt/MvvmCrud.Forms.Prism.svg?style=flat-square)](https://www.nuget.org/packages/MvvmCrud.Forms.Prism/) |        |
 | MAUI_NET7       | [![NuGet version (MvvmCrud.Maui.Prism)](https://img.shields.io/nuget/v/MvvmCrud.Maui.Prism.svg?style=flat-square)](https://www.nuget.org/packages/MvvmCrud.Maui.Prism/) [![NuGet version (MvvmCrud.Maui.Prism)](https://img.shields.io/nuget/dt/MvvmCrud.Maui.Prism.svg?style=flat-square)](https://www.nuget.org/packages/MvvmCrud.Maui.Prism/)       |        |
 
+## Example
+
+
+https://user-images.githubusercontent.com/42063890/224556865-b7906fe4-2a24-4a47-a40a-bd081f7c4a57.mp4
+
+
+
+
 ## How it works
 
 This framework standardize CRUD's operations into ViewModel's file using generic T type, endpoint's requests and fully customizable.
